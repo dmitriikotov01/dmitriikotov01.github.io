@@ -69,6 +69,9 @@ button{font:inherit;color:inherit;background:none;border:0;padding:0;cursor:poin
 .tap{cursor:pointer;transition:transform .12s}.tap:active{transform:scale(.98)}
 /* header */
 .hdr{display:flex;align-items:center;justify-content:space-between;min-height:60px;position:sticky;top:calc(-1 * (env(safe-area-inset-top,0px) + 8px));z-index:15;margin:calc(-1 * (env(safe-area-inset-top,0px) + 8px)) -16px 8px;padding:calc(env(safe-area-inset-top,0px) + 8px) 16px 4px}
+.duo{position:relative;width:80px;height:52px;flex:none}.duo .cb{position:absolute;top:0}.duo-me{left:0;z-index:2}.duo-club{left:28px;z-index:1}.duo-club .i{transform:translateX(6px)}.duo-club .badge{right:-4px}
+.htitle{flex:1;text-align:center;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;padding:0 6px}
+.bandbtn{display:flex;align-items:center;gap:8px;flex:none;width:86px;justify-content:flex-end}.bandic{width:52px;height:52px;border-radius:26px;display:grid;place-items:center;position:relative}.bandic i{position:absolute;top:11px;right:11px;width:9px;height:9px;border-radius:5px;box-shadow:0 0 0 2px var(--bottom)}
 .hdr::before{content:"";position:absolute;inset:0 0 -22px;z-index:-1;pointer-events:none;background:linear-gradient(180deg,var(--top) 0%,color-mix(in srgb,var(--top) 72%,transparent) 62%,transparent 100%);-webkit-backdrop-filter:blur(16px);backdrop-filter:blur(16px);-webkit-mask-image:linear-gradient(#000 70%,transparent);mask-image:linear-gradient(#000 70%,transparent)}
 .morning{position:absolute;inset:0;z-index:55;background:linear-gradient(180deg,var(--top),var(--mid) 55%,var(--bottom));animation:up .35s cubic-bezier(.2,.8,.2,1)}
 .mscroll{position:absolute;inset:0;overflow-y:auto;padding:calc(env(safe-area-inset-top,0px) + 24px) 16px calc(env(safe-area-inset-bottom,0px) + 30px)}
@@ -157,7 +160,7 @@ svg.i{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:1.6;stro
 
 <script>
 const $=s=>document.querySelector(s);
-const I={cup:'<path d="M5 8h11v6a5 5 0 0 1-5 5h-1a5 5 0 0 1-5-5V8zM16 10h2a2 2 0 0 1 0 4h-2"/>',smoke:'<path d="M3 15h14v3H3zM19 15v3M21 15v3M17 11c0-2-2-2-2-4s2-2 2-4M21 11c0-2-2-2-2-4"/>',sliders:'<path d="M4 7h9M17 7h3M4 12h3M11 12h9M4 17h11M19 17h1"/><circle cx="15" cy="7" r="2"/><circle cx="9" cy="12" r="2"/><circle cx="17" cy="17" r="2"/>',gear:'<circle cx="12" cy="12" r="3.2"/><path d="M12 2.5v3M12 18.5v3M2.5 12h3M18.5 12h3M5.3 5.3l2.1 2.1M16.6 16.6l2.1 2.1M5.3 18.7l2.1-2.1M16.6 7.4l2.1-2.1"/><circle cx="12" cy="12" r="6.5"/>',
+const I={band:'<rect x="8" y="6.5" width="8" height="11" rx="2.6"/><path d="M9.5 6.5 10 3h4l.5 3.5M9.5 17.5 10 21h4l.5-3.5"/><path d="M10.5 12h1l.8-1.6 1.2 3.2.7-1.6h.3"/>',cup:'<path d="M5 8h11v6a5 5 0 0 1-5 5h-1a5 5 0 0 1-5-5V8zM16 10h2a2 2 0 0 1 0 4h-2"/>',smoke:'<path d="M3 15h14v3H3zM19 15v3M21 15v3M17 11c0-2-2-2-2-4s2-2 2-4M21 11c0-2-2-2-2-4"/>',sliders:'<path d="M4 7h9M17 7h3M4 12h3M11 12h9M4 17h11M19 17h1"/><circle cx="15" cy="7" r="2"/><circle cx="9" cy="12" r="2"/><circle cx="17" cy="17" r="2"/>',gear:'<circle cx="12" cy="12" r="3.2"/><path d="M12 2.5v3M12 18.5v3M2.5 12h3M18.5 12h3M5.3 5.3l2.1 2.1M16.6 16.6l2.1 2.1M5.3 18.7l2.1-2.1M16.6 7.4l2.1-2.1"/><circle cx="12" cy="12" r="6.5"/>',
  cal:'<rect x="3.5" y="5" width="17" height="15.5" rx="3"/><path d="M3.5 10h17M8 3v4M16 3v4"/>',
  bowl:'<path d="M3.5 11h17a8.5 8.5 0 0 1-17 0Z"/><path d="M9 4c0 1.5 1 1.5 1 3M13 4c0 1.5 1 1.5 1 3"/>',
  dumb:'<path d="M3 9v6M6 7v10M18 7v10M21 9v6M6 12h12"/>',
@@ -186,7 +189,7 @@ const st={tab:'today',stack:[],theme:'blue',water:1.2,eaten:1420,goal:2100,advQ:
   diary:[{t:'Завтрак',s:'08:52 · овсянка, банан, орехи',k:420,p:'oat'},{t:'Обед',s:'13:20 · боул с курицей',k:610,p:''},{t:'Полдник',s:'16:20 · творог 5%',k:190,p:'sal'}],
   liked:{},showMe:true,caseStep:1,portions:[160,150,60,80],workout:null,
   bp:[{s:124,d:80,p:62,h:'Сегодня, 08:10',today:1},{s:128,d:83,p:66,h:'Вчера, 21:30'},{s:122,d:79,p:60,h:'Вчера, 08:05'},{s:131,d:86,p:70,h:'19 октября, 21:40'},{s:125,d:81,p:63,h:'19 октября, 08:00'}],bpd:{s:124,d:80,p:62},
-  zs:{method:'hrr',maxM:null,rest:49,manual:null},ev:0,meal:0,day:3,wk:0,
+  band:{bat:82,conn:true,days:5,sync:'2 мин назад',fw:'1.4.2',hand:'левая',opt:{hr:1,spo2:1,temp:1,stress:1,vib:1,alarm:1,raise:1}},zs:{method:'hrr',maxM:null,rest:49,manual:null},ev:0,meal:0,day:3,wk:0,
   hab:[{k:'coffee',t:510},{k:'coffee',t:930},{k:'sweets',t:960},{k:'wine',t:1260}],wd:{},ovl:{weight:1},pr:null,prac:'sleep'};
 try{const s=JSON.parse(localStorage.getItem('vitals-proto')||'{}');if(s.theme)st.theme=s.theme;}catch(e){}
 const save=()=>{try{localStorage.setItem('vitals-proto',JSON.stringify({theme:st.theme}))}catch(e){}};
@@ -199,7 +202,10 @@ let shineN=0;
 function glintRing(d,w,p,col,delay=1){const k=++shineN,r=(d-w)/2,cx=d/2,dl=`animation-delay:${delay}s`;
  return ring(d,w,p,col)+`<svg class="shine" width="${d}" height="${d}" viewBox="0 0 ${d} ${d}" style="position:absolute;left:0;top:0;pointer-events:none;overflow:visible"><defs><radialGradient id="ghalo${k}"><stop offset="0" stop-color="#fff" stop-opacity=".9"/><stop offset=".35" stop-color="#fff" stop-opacity=".35"/><stop offset="1" stop-color="#fff" stop-opacity="0"/></radialGradient></defs><g class="gpath" style="transform-origin:${cx}px ${cx}px;${dl}"><g transform="translate(${cx} ${cx-r})"><g class="gstar" style="${dl}"><circle r="8" fill="url(#ghalo${k})"/><path d="M0 -13 L0.7 0 L0 13 L-0.7 0Z M-13 0 L0 -0.7 L13 0 L0 0.7Z" fill="#fff"/><path d="M-4.5 -4.5 L0 -0.4 L4.5 4.5 L0 0.4Z M4.5 -4.5 L0.4 0 L-4.5 4.5 L-0.4 0Z" fill="#fff" opacity=".55"/><circle r="1.6" fill="#fff"/></g></g></g></svg>`}
 function ring(d,w,p,col,start=-90,span=360){const r=(d-w)/2,c=2*Math.PI*r,len=c*span/360;return `<svg width="${d}" height="${d}" viewBox="0 0 ${d} ${d}" style="transform:rotate(${start}deg)"><circle cx="${d/2}" cy="${d/2}" r="${r}" fill="none" stroke="var(--div)" stroke-width="${w}" stroke-dasharray="${len} ${c}" stroke-linecap="round"/><circle cx="${d/2}" cy="${d/2}" r="${r}" fill="none" stroke="${col}" stroke-width="${w}" stroke-dasharray="${len*p} ${c}" stroke-linecap="round"/></svg>`}
-const hdr=(left,title,clubOn)=>`<div class="hdr">${left==='back'?`<button class="cb g" data-go="back" aria-label="Назад">${ic('back',20)}</button>`:`<button class="cb g" data-go="profile" aria-label="Профиль"><span class="h3">Д</span></button>`}<span class="b c2">${title}</span><button class="cb g ${clubOn?'on':''}" data-go="club" aria-label="Клуб" style="${clubOn?'border-color:var(--mark)':''}">${ic('groups',20)}${clubOn?'':'<span class="badge">3</span>'}</button></div>`;
+// Header. Main tabs: profile + club (same size, overlapping) on the left, band status on the right. Inner pages: back + title only.
+const batCol=b=>b<20?'var(--low)':b<50?'var(--med)':'var(--good)';
+const hdr=(left,title,clubOn)=>left==='back'?`<div class="hdr"><button class="cb g" data-go="back" aria-label="Назад">${ic('back',20)}</button><span class="b c2 htitle">${title}</span><span style="width:52px;flex:none"></span></div>`
+ :`<div class="hdr"><div class="duo"><button class="cb g duo-club" data-go="club" aria-label="Клуб">${ic('groups',19)}<span class="badge">3</span></button><button class="cb g duo-me" data-go="profile" aria-label="Профиль"><span class="h3">Д</span></button></div><span class="b c2 htitle">${title}</span><button class="bandbtn" data-go="band" aria-label="Браслет"><span class="bs" style="color:${batCol(st.band.bat)}">${st.band.bat}%</span><span class="g bandic">${ic('band',26)}<i style="background:${st.band.conn?'var(--good)':'var(--low)'}"></i></span></button></div>`;
 const sec=(t,r='')=>`<div class="between sec"><span class="h2">${t}</span>${r}</div>`;
 const tip=t=>`<div class="g acc pad row" style="border-radius:22px;align-items:flex-start"><span class="mark">${ic('spark',16)}</span><span class="cap" style="color:var(--tx2)">${t}</span></div>`;
 function slider(label,act){return `<div class="slider g" data-slider="${act}"><span>${label}</span><div class="knob">${ic('arrow',18)}</div></div>`}
@@ -543,6 +549,16 @@ S.mrset=()=>`${hdr('back','Утренний отчёт')}<div class="cap">Пок
 const NIC=[['cig','Сигарета','≈1 мг никотина · 5 мин'],['cigarillo','Сигарилла','≈2 мг · 10–15 мин'],['cigar','Сигара','≈4 мг · 45–90 мин, даже без затяжки'],['hookah','Кальян','≈6 мг · час, + угарный газ'],['heated','Стик','≈1 мг'],['vape','Вейп','≈1 мг за сессию'],['pouch','Пэк или снюс','≈3 мг']];
 function nicSheet(){const l=$('#layer');l.innerHTML=`<div class="veil" data-close></div><div class="sheet g"><div class="grab"></div><div class="h2">Никотин</div><div class="cap" style="margin-bottom:12px">Сегодня, ${tm()} · Норма учтёт влияние на сон и пульс</div><div class="stack" style="gap:8px">${NIC.map(n=>`<button class="g between" data-nic="${n[0]}" style="width:100%;padding:12px 16px;border-radius:22px;text-align:left"><span><span class="bs" style="display:block">${n[1]}</span><span class="mic">${n[2]}</span></span><span class="c3">${ic('plus',18)}</span></button>`).join('')}</div><div class="mic" style="margin-top:10px">Средние значения всасывания. За 3 часа до сна никотин бодрит как кофе</div></div>`}
 
+
+// ---------- Band ----------
+S.band=()=>{const b=st.band,o=b.opt,row=(k,t,s2)=>`<div class="between tap" data-bo="${k}" style="padding:12px 0;border-top:1px solid var(--div)"><div><div class="b">${t}</div><div class="mic">${s2}</div></div><span class="tgl ${o[k]?'on':''}"><i></i></span></div>`;
+ return `${hdr('back','Браслет')}<div style="text-align:center"><div class="g" style="width:120px;height:120px;border-radius:60px;margin:6px auto 0;display:grid;place-items:center;position:relative">${ic('band',64)}<i style="position:absolute;top:22px;right:26px;width:14px;height:14px;border-radius:7px;background:${b.conn?'var(--good)':'var(--low)'};box-shadow:0 0 0 3px var(--bottom)"></i></div><div class="h2" style="margin-top:12px">Браслет Норма #047</div><div class="cap ${b.conn?'good':'lowc'}">${b.conn?'подключён · синхронизирован '+b.sync:'нет связи · последняя синхронизация 3 ч назад'}</div></div>
+ <div class="grid3" style="margin-top:16px">${[['Заряд',b.bat+'%',batCol(b.bat)],['Хватит на','≈ '+b.days+' дн.','var(--tx)'],['Прошивка',b.fw,'var(--tx)']].map(x=>`<div class="g" style="padding:12px 14px;border-radius:22px"><div class="mic">${x[0]}</div><div class="num" style="font-size:24px;color:${x[2]}">${x[1]}</div></div>`).join('')}</div>
+ <div class="g pad" style="margin-top:12px;border-radius:24px"><div class="between"><span class="cap">Заряд за 7 дней</span><span class="mic">заряжать раз в 5–6 дней</span></div><div style="display:flex;gap:6px;align-items:flex-end;height:60px;margin-top:10px">${[100,84,68,52,36,100,82].map((v,i)=>`<i style="flex:1;height:${v*.6}px;border-radius:4px;background:${i===6?batCol(v):'var(--tx)'};opacity:${i===6?1:.35}"></i>`).join('')}</div></div>
+ <div class="row" style="margin-top:12px"><button class="btnG g" style="flex:1" data-bsync>Синхронизировать</button><button class="btnG g" style="flex:1" data-toast="Браслет вибрирует">Найти браслет</button></div>
+ ${sec('Измерения')}<div class="g" style="padding:0 16px 4px">${row('hr','Пульс круглосуточно','каждые 5 минут, на тренировке — каждую секунду')}${row('spo2','Кислород ночью','SpO₂ во сне · −8% заряда в неделю')}${row('temp','Температура кожи','отклонение от личной нормы')}${row('stress','Стресс по ВСР','днём, когда ты в покое')}</div>
+ ${sec('Браслет')}<div class="g" style="padding:0 16px 4px">${row('vib','Вибро-напоминания','вода, еда, подготовка ко сну')}${row('alarm','Умный будильник','в фазе лёгкого сна за 30 мин до 07:00')}${row('raise','Подъём руки — экран','')}<div class="between tap" data-bhand style="padding:12px 0;border-top:1px solid var(--div)"><div><div class="b">Рука</div><div class="mic">влияет на точность шагов</div></div><span class="bs">${b.hand}</span></div></div>
+ ${sec('Обслуживание')}${list([{t:'Обновление прошивки',s:'установлена последняя · 1.4.2',v:''},{t:'Источники данных',s:'Apple Health, весы, тонометр',go:'devices'},{t:'Отвязать браслет',s:'данные останутся в приложении',v:''}])}`};
 // ---------- Practices: meditation and breathing (plan «Подготовка ко сну», stress) ----------
 const PRAC={
  sleep:{t:'Медитация перед сном',min:10,kind:'breath',in:4,out:6,sub:'Спокойное дыхание и расслабление тела',steps:['Ляг удобно, закрой глаза','Вдох носом на 4 счёта, выдох на 6','Отпускай напряжение: лоб, челюсть, плечи, живот','Если пришла мысль — отметь её и вернись к дыханию']},
@@ -793,7 +809,7 @@ function doAct(a){if(a.startsWith('toast:')){toast(a.slice(6));return render(tru
 function startWorkout(sp){st.workout={sport:sp,t:0,hr:96,paused:false};st.stack.push('live');render();clearInterval(liveT);liveT=setInterval(()=>{const w=st.workout;if(!w||w.paused)return;w.t+=1;w.hr=Math.max(90,Math.min(165,w.hr+Math.round(Math.random()*6-2.4)));if(st.stack[st.stack.length-1]==='live'){const m=Math.floor(w.t/60),s=w.t%60;const a=$('#wt'),b=$('#whr');if(a)a.textContent=String(m).padStart(2,'0')+':'+String(s).padStart(2,'0');if(b)b.textContent=w.hr;if(w.t%5==0)render(true)}},1000)}
 
 // events
-document.addEventListener('click',e=>{const t=e.target.closest('button,[data-go],[data-tab],[data-pa],[data-rid],[data-prac],[data-wd],[data-prgo],[data-ev],[data-meal],[data-day],[data-wk],[data-pm],[data-mrt]');if(!t)return;const d=t.dataset;
+document.addEventListener('click',e=>{const t=e.target.closest('button,[data-go],[data-tab],[data-pa],[data-rid],[data-prac],[data-wd],[data-prgo],[data-ev],[data-meal],[data-day],[data-wk],[data-pm],[data-mrt],[data-bo],[data-bhand]');if(!t)return;const d=t.dataset;
  if(d.tg){st.tg[d.tg]=st.tg[d.tg]?0:1;if(d.tg==='rank')st.showMe=!!st.tg.rank;t.classList.toggle('on');return}
  if(d.multi!==undefined){t.classList.toggle('on');return}
  if(d.seg!==undefined){t.parentNode.querySelectorAll('button').forEach(b=>b.classList.remove('on'));t.classList.add('on');return}
@@ -818,6 +834,9 @@ document.addEventListener('click',e=>{const t=e.target.closest('button,[data-go]
  if(d.hrv){hrvP=d.hrv;return render(true)}
  if(d.rid){st.rid=d.rid;return go('recipe')}
  if(d.rf){rf=d.rf;return render(true)}
+ if(d.bo){st.band.opt[d.bo]=st.band.opt[d.bo]?0:1;return render(true)}
+ if(d.bhand!==undefined){st.band.hand=st.band.hand==='левая'?'правая':'левая';return render(true)}
+ if(d.bsync!==undefined){st.band.sync='только что';st.band.conn=true;toast('Синхронизировано');return render(true)}
  if(d.pm){st.pm=d.pm;return go('pm')}
  if(d.nic){const n=new Date();st.hab.push({k:d.nic==='cig'?'cig':d.nic,t:n.getHours()*60+n.getMinutes()});st.hab.sort((a,b)=>a.t-b.t);closeLayer();toast(NIC.find(x=>x[0]===d.nic)[1]+' · '+tm()+' · учтено в «Привычках дня»');return render(true)}
  if(d.mrset!==undefined){closeLayer();return go('mrset')}
