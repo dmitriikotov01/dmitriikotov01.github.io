@@ -25,11 +25,11 @@
   --tx:#0B1530;--tx2:rgba(11,21,48,.62);--tx3:rgba(11,21,48,.42);--div:rgba(11,21,48,.1);
   --lime:#24408A;--mark:#7D9400;--onlime:#E7FF51;--knob:#24408A;--knobi:#E7FF51;--link:#24408A;--bar:rgba(255,255,255,.75);
   --high:#2E7FD6;--awake:#7D9400;--hdr:#1B2F66;color-scheme:light}
-html,body{height:100%;background:var(--bottom);color:var(--tx);font-family:var(--f)}
+html,body{height:var(--appH,100%);overflow:hidden;background:var(--bottom);color:var(--tx);font-family:var(--f)}
 body{overflow:hidden}
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 button{font:inherit;color:inherit;background:none;border:0;padding:0;cursor:pointer}
-.stage{position:fixed;top:0;left:0;right:0;height:var(--appH,100%);display:flex;justify-content:center;background:#05070c}
+.stage{position:absolute;top:0;left:0;right:0;height:var(--appH,100%);display:flex;justify-content:center;background:#05070c}
 .phone{position:relative;width:100%;max-width:430px;height:100%;overflow:hidden;background:var(--bottom)}
 @media(min-width:600px){.stage{align-items:center}.phone{height:min(932px,96vh);border-radius:48px;box-shadow:0 30px 80px rgba(0,0,0,.6)}}
 .bg{position:absolute;inset:0;background:linear-gradient(180deg,var(--top) 0%,var(--mid) 52%,var(--bottom) 100%)}
