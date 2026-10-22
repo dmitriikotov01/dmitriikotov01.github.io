@@ -101,6 +101,9 @@ svg.i{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:1.6;stro
 /* plan */
 .plan{position:relative;padding-left:34px}
 .plan::before{content:"";position:absolute;left:12px;top:6px;bottom:6px;width:1px;background:var(--div)}
+.glint{stroke:#fff;opacity:0;filter:drop-shadow(0 0 6px rgba(255,255,255,.9));animation:glint 5s ease-in-out 1.2s infinite}
+@keyframes glint{0%{stroke-dashoffset:0;opacity:0}3%{opacity:.95}17%{opacity:.95}22%{stroke-dashoffset:var(--e);opacity:0}100%{stroke-dashoffset:var(--e);opacity:0}}
+@media(prefers-reduced-motion:reduce){.glint{animation:none}}
 .pi{position:relative;display:flex;align-items:center;gap:12px;padding:10px 0;min-height:56px}
 .pi .dot{position:absolute;left:-28px;width:16px;height:16px;border-radius:8px;border:1.5px solid var(--tx3);background:var(--bottom)}
 .pi.done .dot{background:var(--tx3);border-color:var(--tx3)}
@@ -174,6 +177,8 @@ const save=()=>{try{localStorage.setItem('vitals-proto',JSON.stringify({theme:st
 function applyTheme(){document.documentElement.dataset.app=st.theme==='blue'?'':st.theme;if(st.theme==='blue')delete document.documentElement.dataset.app;}
 
 // ---------- helpers ----------
+// Readiness ring with a light glint running along the arc every 5 s — the hint that the ring opens «Факторы».
+function glintRing(d,w,p,col){const r=(d-w)/2,c=2*Math.PI*r,len=c*p,seg=34;return ring(d,w,p,col).replace('</svg>',`<circle class="glint" cx="${d/2}" cy="${d/2}" r="${r}" fill="none" stroke-width="${w}" stroke-linecap="round" stroke-dasharray="${seg} ${c}" style="--e:${-(len-seg)}px"/></svg>`)}
 function ring(d,w,p,col,start=-90,span=360){const r=(d-w)/2,c=2*Math.PI*r,len=c*span/360;return `<svg width="${d}" height="${d}" viewBox="0 0 ${d} ${d}" style="transform:rotate(${start}deg)"><circle cx="${d/2}" cy="${d/2}" r="${r}" fill="none" stroke="var(--div)" stroke-width="${w}" stroke-dasharray="${len} ${c}" stroke-linecap="round"/><circle cx="${d/2}" cy="${d/2}" r="${r}" fill="none" stroke="${col}" stroke-width="${w}" stroke-dasharray="${len*p} ${c}" stroke-linecap="round"/></svg>`}
 const hdr=(left,title,clubOn)=>`<div class="hdr">${left==='back'?`<button class="cb g" data-go="back" aria-label="Назад">${ic('back',20)}</button>`:`<button class="cb g" data-go="profile" aria-label="Профиль"><span class="h3">Д</span></button>`}<span class="b c2">${title}</span><button class="cb g ${clubOn?'on':''}" data-go="club" aria-label="Клуб" style="${clubOn?'border-color:var(--mark)':''}">${ic('groups',20)}${clubOn?'':'<span class="badge">3</span>'}</button></div>`;
 const sec=(t,r='')=>`<div class="between sec"><span class="h2">${t}</span>${r}</div>`;
@@ -190,8 +195,8 @@ const S={};
 S.today=()=>{const hr=56+Math.round(Math.random()*5);const plan=st.plan.map((p,i)=>p.s==='pin'?'':`<div class="pi ${p.s}${p.a&&p.s!=='done'?' tap':''}" data-plan="${i}"${p.a&&p.s!=='done'?` data-pa="${i}"`:''}><span class="dot"></span>${p.coach?`<span class="ava">${p.coach}</span>`:`<span class="${p.s==='done'?'c3':''}">${ic(p.i,20)}</span>`}<div style="min-width:0"><div class="bs t">${p.t}</div><div class="mic ${p.s==='now'?'mark':''}" style="${p.s==='now'?'color:var(--mark)':''}">${p.s==='now'?'сейчас · ':''}${p.sub}</div></div>${p.s==='now'?`<button class="chk" data-done="${i}" aria-label="Отметить">${ic('check',18)}</button>`:p.a&&p.s!=='done'?`<span class="c3" style="margin-left:auto">${ic('chev',16)}</span>`:''}</div>`).join('');
  const done=st.plan.filter(p=>p.s==='done').length;
  return `${hdr('ava','Вторник, 20 октября')}
- <div style="text-align:center" class="tap" data-go="factors"><div class="over">Готовность</div><div style="position:relative;width:220px;height:220px;margin:12px auto 0">${ring(220,6,.82,'var(--high)')}<div style="position:absolute;inset:0;display:grid;place-items:center"><div><div class="num" style="font-size:104px">82</div><div class="mic">из 100</div></div></div></div>
- <div class="bs hi" style="margin-top:14px">Высокая · +6 к вчера</div><div class="b c2" style="max-width:300px;margin:4px auto 12px">Сон и ВСР в норме — сегодня можно нагружаться</div><span class="chip">Факторы&nbsp;${ic('chev',14)}</span></div>
+ <div style="text-align:center" class="tap" data-go="factors"><div class="over">Готовность</div><div style="position:relative;width:220px;height:220px;margin:12px auto 0">${glintRing(220,6,.82,'var(--high)')}<div style="position:absolute;inset:0;display:grid;place-items:center"><div><div class="num" style="font-size:104px">82</div><div class="mic">из 100</div></div></div></div>
+ <div class="bs hi" style="margin-top:14px">Высокая · +6 к вчера</div><div class="b c2" style="max-width:300px;margin:4px auto 12px">Сон и ВСР в норме — сегодня можно нагружаться</div></div>
  <div class="grid3" style="margin-top:22px">
   <div class="g pad tap" data-go="hr" style="border-radius:24px;padding:14px"><div class="between"><span class="cap">Пульс</span><span id="live" style="width:8px;height:8px;border-radius:4px;background:var(--low)"></span></div><div class="num" style="font-size:40px" id="hr">${hr}</div><div class="mic">уд/мин</div><svg viewBox="0 0 86 18" style="width:100%;height:18px;margin-top:6px"><path d="M0 11 H22 L26 4 L31 16 L35 9 H52 L56 2 L61 17 L65 9 H86" stroke="var(--low)" fill="none" stroke-width="1.4"/></svg></div>
   <div class="g pad tap" data-go="stress" style="border-radius:24px;padding:14px"><span class="cap">Стресс</span><div class="num" style="font-size:40px">18</div><div class="mic good">низкий</div><div style="display:flex;gap:3px;align-items:flex-end;height:22px;margin-top:4px">${[4,6,5,9,12,8,6,5,10,7,4,3].map((h,i)=>`<i style="flex:1;height:${h*1.6}px;border-radius:2px;background:var(--tx);opacity:${i==11?1:.3}"></i>`).join('')}</div></div>
