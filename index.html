@@ -15,12 +15,12 @@
   --tx:#fff;--tx2:rgba(255,255,255,.62);--tx3:rgba(255,255,255,.42);--div:rgba(255,255,255,.14);
   --lime:#E7FF51;--mark:#E7FF51;--onlime:#0C0D0F;--knob:#E7FF51;--knobi:#0C0D0F;--link:#E7FF51;--bar:rgba(11,21,48,.55);
   --low:#FF6B5E;--med:#FFB547;--good:#5ED6A0;--high:#9FE3FF;
-  --deep:#2C46D6;--light:#6FB4FF;--rem:#B455F0;--awake:#E7FF51;--hdr:#2C4FAE;
+  --deep:#070B20;--light:#2A5EB0;--rem:#1E2361;--awake:#E7FF51;--hdr:#2C4FAE;
   --f:"Geist",-apple-system,"SF Pro Display","Helvetica Neue",Arial,sans-serif;
   color-scheme:dark;
 }
 :root[data-app="forest"]{--top:#3D5C4A;--mid:#1B2E23;--bottom:#050906;--cloud:#6E8C78;--hl:#93AE9A;--bar:rgba(12,22,16,.55);--deep:#2B2F8F;--light:#1C8C93;--rem:#4FE3CF;--hdr:#2E4A3A}
-:root[data-app="metal"]{--deep:#1F3FBF;--light:#6FA8F0;--rem:#9B3FD8;--awake:#7D9400;--top:#F9F9FA;--mid:#E6E8EB;--bottom:#D6D9DE;--cloud:#fff;--hl:#fff;
+:root[data-app="metal"]{--top:#F9F9FA;--mid:#E6E8EB;--bottom:#D6D9DE;--cloud:#fff;--hl:#fff;
   --glass:rgba(255,255,255,.62);--glass2:rgba(255,255,255,.85);--stroke:rgba(255,255,255,.95);--stroke2:#fff;
   --tx:#0B1530;--tx2:rgba(11,21,48,.62);--tx3:rgba(11,21,48,.42);--div:rgba(11,21,48,.1);
   --lime:#24408A;--mark:#7D9400;--onlime:#E7FF51;--knob:#24408A;--knobi:#E7FF51;--link:#24408A;--bar:rgba(255,255,255,.75);
@@ -162,7 +162,7 @@ svg.i{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:1.6;stro
   <div id="layer"></div>
 </div></div>
 
-<script src="feed.js?v=50"></script>
+<script src="feed.js?v=51"></script>
 <script>
 const $=s=>document.querySelector(s);
 const I={band:'<rect x="8" y="7" width="8" height="10" rx="2.6"/><path d="M10 7V3.5M14 7V3.5M10 17v3.5M14 17v3.5"/>',cup:'<path d="M5 8h11v6a5 5 0 0 1-5 5h-1a5 5 0 0 1-5-5V8zM16 10h2a2 2 0 0 1 0 4h-2"/>',smoke:'<path d="M3 15h14v3H3zM19 15v3M21 15v3M17 11c0-2-2-2-2-4s2-2 2-4M21 11c0-2-2-2-2-4"/>',sliders:'<path d="M4 7h9M17 7h3M4 12h3M11 12h9M4 17h11M19 17h1"/><circle cx="15" cy="7" r="2"/><circle cx="9" cy="12" r="2"/><circle cx="17" cy="17" r="2"/>',gear:'<circle cx="12" cy="12" r="3.2"/><path d="M12 2.5v3M12 18.5v3M2.5 12h3M18.5 12h3M5.3 5.3l2.1 2.1M16.6 16.6l2.1 2.1M5.3 18.7l2.1-2.1M16.6 7.4l2.1-2.1"/><circle cx="12" cy="12" r="6.5"/>',
