@@ -158,6 +158,7 @@ svg.i{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:1.6;stro
   <div id="layer"></div>
 </div></div>
 
+<script src="feed.js"></script>
 <script>
 const $=s=>document.querySelector(s);
 const I={band:'<rect x="8" y="7" width="8" height="10" rx="2.6"/><path d="M10 7V3.5M14 7V3.5M10 17v3.5M14 17v3.5"/>',cup:'<path d="M5 8h11v6a5 5 0 0 1-5 5h-1a5 5 0 0 1-5-5V8zM16 10h2a2 2 0 0 1 0 4h-2"/>',smoke:'<path d="M3 15h14v3H3zM19 15v3M21 15v3M17 11c0-2-2-2-2-4s2-2 2-4M21 11c0-2-2-2-2-4"/>',sliders:'<path d="M4 7h9M17 7h3M4 12h3M11 12h9M4 17h11M19 17h1"/><circle cx="15" cy="7" r="2"/><circle cx="9" cy="12" r="2"/><circle cx="17" cy="17" r="2"/>',gear:'<circle cx="12" cy="12" r="3.2"/><path d="M12 2.5v3M12 18.5v3M2.5 12h3M18.5 12h3M5.3 5.3l2.1 2.1M16.6 16.6l2.1 2.1M5.3 18.7l2.1-2.1M16.6 7.4l2.1-2.1"/><circle cx="12" cy="12" r="6.5"/>',
@@ -339,7 +340,8 @@ S.anomaly=()=>`${hdr('back','Требует внимания')}<div class="over 
 // Sleep: one night or an average over a week / month / year. k = nights before 20 Oct 2026 (the prototype's "today").
 let TODAY=new Date(2026,9,20);
 // Personal feed from norma_core (norma_feed.json, see norma_core/FEED.md): chosen by the user, kept only on this device.
-let FEED=null;try{FEED=JSON.parse(localStorage.getItem('vitals-feed')||'null')}catch(e){}
+// Site feed (feed.js → window.SITE_FEED) is shown by default; a file loaded on the device takes priority.
+let FEED=null,FEED_LOCAL=false;try{FEED=JSON.parse(localStorage.getItem('vitals-feed')||'null');FEED_LOCAL=!!FEED}catch(e){}if(!FEED&&window.SITE_FEED)FEED=window.SITE_FEED;
 if(FEED&&FEED.date){const [y,m,d]=FEED.date.split('-').map(Number);TODAY=new Date(y,m-1,d)}
 const tday=n=>new Date(TODAY.getFullYear(),TODAY.getMonth(),TODAY.getDate()+n);
 const MON=['январь','февраль','март','апрель','май','июнь','июль','август','сентябрь','октябрь','ноябрь','декабрь'],MONG=['января','февраля','марта','апреля','мая','июня','июля','августа','сентября','октября','ноября','декабря'];
@@ -856,7 +858,7 @@ document.addEventListener('click',e=>{const t=e.target.closest('button,[data-go]
  if(d.bo){st.band.opt[d.bo]=st.band.opt[d.bo]?0:1;return render(true)}
  if(d.bhand!==undefined){st.band.hand=st.band.hand==='левая'?'правая':'левая';return render(true)}
  if(d.bsync!==undefined){st.band.sync='только что';st.band.conn=true;toast('Синхронизировано');return render(true)}
- if(d.feedclear!==undefined){try{localStorage.removeItem('vitals-feed')}catch(e){}toast('Демо-данные возвращены');setTimeout(()=>location.reload(),500);return}
+ if(d.feedclear!==undefined){try{localStorage.removeItem('vitals-feed')}catch(e){}toast(window.SITE_FEED?'Возвращены данные сайта':'Демо-данные возвращены');setTimeout(()=>location.reload(),500);return}
  if(d.lab){st.lab=+d.lab;return go('lab')}
  if(d.mgo){const [g,v]=d.mgo.split(':');closeLayer();st.stack=[];st.tab='today';if(g==='ev'){st.ev=+v;return go('event')}if(g==='pm'){st.pm=v;return go('pm')}return go(g)}
  if(d.pm){st.pm=d.pm;return go('pm')}
@@ -934,10 +936,10 @@ if(FEED){const F=FEED,ser=(arr,key,mul=1)=>{const m={};for(const r of arr||[])if
  if(F.activities&&F.activities.length){WK.length=0;for(const a of F.activities.slice(0,6)){const d=new Date(a.date);const z=a.zones_min||{};WK.push([a.name,`${d.getDate()} ${MONG[d.getMonth()]} · ${a.start||''}`,a.duration_min,Math.round((a.load||0)*4.5),Math.round(a.avg_hr||0),Math.round(a.max_hr||0),Math.min(5,Math.round((a.load||0)/30*10)/10),['Z1','Z2','Z3','Z4','Z5'].map(k=>Math.round(z[k]||0)),''])}}
  if(F.plan&&F.plan.length){st.plan[0]={s:'pin',t:F.plan[0].text,sub:'Задача от Нормы на сегодня — по твоим данным'};F.plan.slice(1).forEach(p=>st.plan.splice(1,0,{s:'next',i:'spark',t:p.text,sub:'по твоим данным'}))}
 }
-S.mydata=()=>{const F=FEED;return `${hdr('back','Мои данные')}${F?`<div class="g acc pad"><div class="over" style="color:var(--mark)">Твои данные загружены</div><div class="h3" style="margin-top:6px">${({garmin:'Garmin',band:'Браслет Нормы'})[F.source]||F.source} · на ${new Date(F.date).toLocaleDateString('ru',{day:'numeric',month:'long'})}</div><div class="cap">история ${F.period?F.period.join(' — '):''} · собран ${String(F.generated_at||'').replace('T',' ').slice(0,16)}</div></div>`:`<div class="g pad"><div class="h3">Сейчас показаны демо-данные</div><div class="cap" style="margin-top:6px">Загрузи файл norma_feed.json, который собрало ядро Нормы из твоей выгрузки, — экраны покажут твои цифры</div></div>`}
+S.mydata=()=>{const F=FEED;return `${hdr('back','Мои данные')}${F?`<div class="g acc pad"><div class="over" style="color:var(--mark)">${FEED_LOCAL?'Твои данные загружены':'Данные на сайте'}</div><div class="h3" style="margin-top:6px">${({garmin:'Garmin',band:'Браслет Нормы'})[F.source]||F.source} · на ${new Date(F.date).toLocaleDateString('ru',{day:'numeric',month:'long'})}</div><div class="cap">история ${F.period?F.period.join(' — '):''} · собран ${String(F.generated_at||'').replace('T',' ').slice(0,16)}</div></div>`:`<div class="g pad"><div class="h3">Сейчас показаны демо-данные</div><div class="cap" style="margin-top:6px">Загрузи файл norma_feed.json, который собрало ядро Нормы из твоей выгрузки, — экраны покажут твои цифры</div></div>`}
  <label class="btnL" style="width:100%;margin-top:14px;display:flex;align-items:center;justify-content:center;gap:8px">${ic('plus',18)} ${F?'Загрузить другой файл':'Загрузить мои данные'}<input type="file" accept=".json,application/json" data-feedfile hidden></label>
- ${F?`<button class="btnG g" style="width:100%;margin-top:10px" data-feedclear>Вернуть демо</button>`:''}
- <div class="mic" style="margin-top:14px">Файл хранится только на этом устройстве и никуда не отправляется. Чтобы удалить — «Вернуть демо»</div>
+ ${FEED_LOCAL?`<button class="btnG g" style="width:100%;margin-top:10px" data-feedclear>${window.SITE_FEED?'Вернуть данные сайта':'Вернуть демо'}</button>`:''}
+ <div class="mic" style="margin-top:14px">Файл хранится только на этом устройстве и никуда не отправляется.${FEED_LOCAL?(window.SITE_FEED?' Чтобы вернуться к данным сайта — «Вернуть данные сайта»':' Чтобы удалить — «Вернуть демо»'):''}</div>
  ${F?`${sec('Что взято из файла')}<div class="g" style="padding:4px 16px">${[['Готовность',F.readiness&&F.readiness.score],['Сон',F.sleep&&F.sleep.asleep],['Пульс покоя',F.heart&&F.heart.rhr],['ВСР',F.heart&&F.heart.hrv],['Нагрузка',F.load&&F.load.peak],['Тренировки',F.activities&&F.activities.length],['Потенциал',F.potential&&F.potential.value!=null?F.potential.value+'%':null]].map((r,i)=>`<div class="between" style="padding:10px 0;${i?'border-top:1px solid var(--div)':''}"><span class="b">${r[0]}</span><span class="bs ${r[1]==null?'c3':''}">${r[1]==null?'нет данных':typeof r[1]==='number'?Math.round(r[1]):r[1]}</span></div>`).join('')}</div>`:''}`};
 document.addEventListener('change',e=>{if(!e.target.matches('[data-feedfile]'))return;const f=e.target.files[0];if(!f)return;const rd=new FileReader();rd.onload=()=>{try{const j=JSON.parse(rd.result);if(!j.version||!j.date)throw 0;localStorage.setItem('vitals-feed',JSON.stringify(j));toast('Данные загружены');setTimeout(()=>location.reload(),600)}catch(err){toast('Это не файл norma_feed.json')}};rd.readAsText(f)});
 
