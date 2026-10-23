@@ -1,4 +1,4 @@
-const C='vitals-proto-v49';
+const C='vitals-proto-v50';
 self.addEventListener('install',e=>{self.skipWaiting();e.waitUntil(caches.open(C).then(c=>c.addAll(['./','./index.html','./feed.js','./manifest.webmanifest','./icon-192.png'])))});
 self.addEventListener('activate',e=>e.waitUntil(caches.keys().then(ks=>Promise.all(ks.filter(k=>k!==C).map(k=>caches.delete(k)))).then(()=>self.clients.claim())));
 // Network first, so a new push shows up on next open; cache is the offline fallback.
