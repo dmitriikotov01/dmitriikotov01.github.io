@@ -38,7 +38,7 @@ button{font:inherit;color:inherit;background:none;border:0;padding:0;cursor:poin
 :root[data-app="metal"] .bg{background:linear-gradient(135deg,#F9F9FA 0%,#E1E3E7 30%,#F4F5F7 52%,#D6D9DE 78%,#ECEDF0 100%)}
 :root[data-app="metal"] .bg::before{opacity:.9}
 .grain{position:absolute;inset:0;mix-blend-mode:overlay;opacity:.13;pointer-events:none}
-.scroll{position:absolute;inset:0;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:calc(env(safe-area-inset-top,0px) + 8px) max(16px,env(safe-area-inset-right,0px)) 120px max(16px,env(safe-area-inset-left,0px))}
+.scroll{position:absolute;inset:0;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:calc(env(safe-area-inset-top,0px) + 8px) max(16px,env(safe-area-inset-right,0px)) 132px max(16px,env(safe-area-inset-left,0px))}
 .scroll::-webkit-scrollbar{display:none}
 .screen{animation:in .28s ease}
 @keyframes in{from{opacity:0;transform:translateX(18px)}to{opacity:1;transform:none}}
@@ -96,10 +96,10 @@ svg.i{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:1.6;stro
 .knob{position:absolute;left:4px;top:4px;width:48px;height:48px;border-radius:24px;background:var(--knob);color:var(--knobi);display:grid;place-items:center;box-shadow:0 6px 14px rgba(0,0,0,.35)}
 /* tab bar */
 .phone::after{content:"";position:absolute;left:0;right:0;bottom:0;height:calc(env(safe-area-inset-bottom,0px) + 70px);background:linear-gradient(180deg,transparent,var(--bottom) 85%);pointer-events:none;z-index:19}
-.tabbar{position:absolute;left:50%;transform:translateX(-50%);bottom:max(12px,calc(env(safe-area-inset-bottom,0px) - 8px));width:min(354px,calc(100% - 32px));height:64px;border-radius:32px;display:flex;align-items:center;justify-content:space-around;background:var(--bar);border:1px solid var(--stroke);backdrop-filter:blur(30px);-webkit-backdrop-filter:blur(30px);z-index:20}
-.tab{width:52px;height:52px;display:grid;place-items:center;position:relative;opacity:.45}
-.tab.on{opacity:1}.tab.on::after{content:"";position:absolute;bottom:4px;width:4px;height:4px;border-radius:2px;background:var(--mark)}
-.plus{width:48px;height:48px;border-radius:24px;background:var(--lime);color:var(--onlime);display:grid;place-items:center;box-shadow:0 6px 14px rgba(0,0,0,.35)}
+.tabbar{position:absolute;left:50%;transform:translateX(-50%);bottom:max(12px,calc(env(safe-area-inset-bottom,0px) - 8px));width:min(370px,calc(100% - 24px));height:72px;border-radius:36px;display:flex;align-items:center;justify-content:space-between;padding:0 4px;background:var(--bar);border:1px solid var(--stroke);backdrop-filter:blur(30px);-webkit-backdrop-filter:blur(30px);z-index:20}
+.tab{flex:1;min-width:0;height:64px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;position:relative;opacity:.5;color:var(--tx)}.tab .tl{font-size:11px;font-weight:400;line-height:1;white-space:nowrap}
+.tab.on{opacity:1}.tab.on .tl{color:var(--mark)}
+.plus{flex:none;width:72px;height:72px;margin:0 2px;border-radius:36px;background:var(--lime);color:var(--onlime);display:grid;place-items:center;box-shadow:0 6px 14px rgba(0,0,0,.35)}
 :root[data-app="metal"] .plus svg{color:#E7FF51}
 /* sheet */
 .veil{position:absolute;inset:0;backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);background:rgba(0,0,0,.2);z-index:30;animation:fade .2s}
@@ -162,7 +162,7 @@ svg.i{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:1.6;stro
   <div id="layer"></div>
 </div></div>
 
-<script src="feed.js?v=53"></script>
+<script src="feed.js?v=54"></script>
 <script>
 const $=s=>document.querySelector(s);
 const I={band:'<rect x="8" y="7" width="8" height="10" rx="2.6"/><path d="M10 7V3.5M14 7V3.5M10 17v3.5M14 17v3.5"/>',cup:'<path d="M5 8h11v6a5 5 0 0 1-5 5h-1a5 5 0 0 1-5-5V8zM16 10h2a2 2 0 0 1 0 4h-2"/>',smoke:'<path d="M3 15h14v3H3zM19 15v3M21 15v3M17 11c0-2-2-2-2-4s2-2 2-4M21 11c0-2-2-2-2-4"/>',sliders:'<path d="M4 7h9M17 7h3M4 12h3M11 12h9M4 17h11M19 17h1"/><circle cx="15" cy="7" r="2"/><circle cx="9" cy="12" r="2"/><circle cx="17" cy="17" r="2"/>',gear:'<circle cx="12" cy="12" r="3.2"/><path d="M12 2.5v3M12 18.5v3M2.5 12h3M18.5 12h3M5.3 5.3l2.1 2.1M16.6 16.6l2.1 2.1M5.3 18.7l2.1-2.1M16.6 7.4l2.1-2.1"/><circle cx="12" cy="12" r="6.5"/>',
@@ -857,8 +857,8 @@ function textFit(root){const k=st.ts/80,dw=TW[st.tw][1];if(k===1&&!dw)return;con
 new MutationObserver(ms=>{for(const m of ms)for(const n of m.addedNodes)if(n.nodeType===1)textFit(n.parentNode||n)}).observe(document.querySelector('#phone'),{childList:true,subtree:true});
 
 // ---------- tabbar & router ----------
-const TABS=[['today','cal'],['nutrition','bowl'],['plus'],['activity','dumb'],['body','heart']];
-function renderTabs(){$('#tabbar').innerHTML=TABS.map(t=>t[0]=='plus'?`<button class="plus" data-plus aria-label="Добавить">${ic('plus',20)}</button>`:`<button class="tab ${st.tab==t[0]&&!st.stack.length?'on':''}" data-tab="${t[0]}" aria-label="${t[0]}">${ic(t[1])}</button>`).join('')}
+const TABS=[['today','cal','Сегодня'],['nutrition','bowl','Питание'],['plus'],['activity','dumb','Активность'],['body','heart','Тело']];
+function renderTabs(){$('#tabbar').innerHTML=TABS.map(t=>t[0]=='plus'?`<button class="plus" data-plus aria-label="Добавить">${ic('plus',30)}</button>`:`<button class="tab ${st.tab==t[0]&&!st.stack.length?'on':''}" data-tab="${t[0]}" aria-label="${t[2]}">${ic(t[1],26)}<span class="tl">${t[2]}</span></button>`).join('')}
 let liveT;
 function render(keep){const name=st.stack.length?st.stack[st.stack.length-1]:st.tab;const sc=$('#scroll');sc.innerHTML=`<div class="screen">${S[name]()}</div>`;if(!keep)sc.scrollTop=0;renderTabs();bindSliders();
  $('#tabbar').hidden=['camera','live','recognize'].includes(name);}
