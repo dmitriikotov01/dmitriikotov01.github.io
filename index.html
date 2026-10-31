@@ -162,7 +162,7 @@ svg.i{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:1.6;stro
   <div id="layer"></div>
 </div></div>
 
-<script src="feed.js?v=55"></script>
+<script src="feed.js?v=56"></script>
 <script>
 const $=s=>document.querySelector(s);
 const I={band:'<rect x="8" y="7" width="8" height="10" rx="2.6"/><path d="M10 7V3.5M14 7V3.5M10 17v3.5M14 17v3.5"/>',cup:'<path d="M5 8h11v6a5 5 0 0 1-5 5h-1a5 5 0 0 1-5-5V8zM16 10h2a2 2 0 0 1 0 4h-2"/>',smoke:'<path d="M3 15h14v3H3zM19 15v3M21 15v3M17 11c0-2-2-2-2-4s2-2 2-4M21 11c0-2-2-2-2-4"/>',sliders:'<path d="M4 7h9M17 7h3M4 12h3M11 12h9M4 17h11M19 17h1"/><circle cx="15" cy="7" r="2"/><circle cx="9" cy="12" r="2"/><circle cx="17" cy="17" r="2"/>',gear:'<circle cx="12" cy="12" r="3.2"/><path d="M12 2.5v3M12 18.5v3M2.5 12h3M18.5 12h3M5.3 5.3l2.1 2.1M16.6 16.6l2.1 2.1M5.3 18.7l2.1-2.1M16.6 7.4l2.1-2.1"/><circle cx="12" cy="12" r="6.5"/>',
@@ -819,7 +819,29 @@ S.theme=()=>`${hdr('back','Тема оформления')}<div class="stack">${
 // ---------- more screens ----------
 const list=(items)=>`<div class="g" style="padding:4px 16px">${items.map((it,i)=>`<div class="row ${it.go?'tap':''}" ${it.go?`data-go="${it.go}"`:''} style="padding:12px 0;${i?'border-top:1px solid var(--div)':''}">${it.i?ic(it.i,20):''}<div style="min-width:0"><div class="b">${it.t}</div>${it.s?`<div class="cap ${it.c||''}" style="${it.c=='mark'?'color:var(--mark)':''}">${it.s}</div>`:''}</div>${it.tg!==undefined?`<button class="toggle ${st.tg[it.tg]?'on':''}" data-tg="${it.tg}" style="margin-left:auto" aria-label="${it.t}"></button>`:it.v?`<span class="bs" style="margin-left:auto;white-space:nowrap">${it.v}</span>`:`<span class="c3" style="margin-left:auto">${ic('chev',16)}</span>`}</div>`).join('')}</div>`;
 st.tg={apple:1,garmin:1,scale:1,cal:0,rank:1,coach:1,doc:0,n_adv:1,n_plan:1,n_club:1,n_coach:1,n_quiet:1,auto:0};
-S.devices=()=>`${hdr('back','Источники данных')}<div class="g acc pad"><div class="row"><span class="mark" style="color:var(--mark)">${ic('watch',34)}</span><div><div class="h3">Браслет Vitals #047</div><div class="cap good">синхронизирован 2 мин назад</div></div></div><div class="grid3" style="margin-top:14px">${[['Заряд','64%'],['Прошивка','1.4.2'],['Ношение','24/7']].map(s=>`<div><div class="cap">${s[0]}</div><div class="bs">${s[1]}</div></div>`).join('')}</div></div>
+const BAND={st:{conn:'idle',bt:'unknown'},list:[],bat:null,steps:null,hr:null,hrs:'',sync:null,err:'',day:{}};
+function bandCmd(c,a){try{webkit.messageHandlers.band.postMessage(Object.assign({cmd:c},a||{}))}catch(e){}}
+function bandAgo(iso){if(!iso)return'';const m=Math.round((Date.now()-new Date(iso))/6e4);return m<1?'только что':m<60?m+' мин назад':Math.round(m/60)+' ч назад'}
+function bandCard(){const b=BAND,s=b.st,c=s.conn,dv=s.device;
+ const stat=s.bt=='off'?['Bluetooth выключен','']:s.bt=='denied'?['Нет доступа к Bluetooth: Настройки → Vitals','']:c=='ready'?(s.syncing||b.sync&&b.sync.state=='reading'?['синхронизация'+(b.sync&&b.sync.total?` · день ${b.sync.day} из ${b.sync.total}`:'…'),'']:['синхронизирован '+(b.sync&&b.sync.at?bandAgo(b.sync.at):''),'good']):c=='connecting'?['подключаюсь…','']:c=='scanning'?['ищу браслет рядом…','']:c=='failed'?['не удалось подключиться','']:[s.saved?'не подключён':'браслет не привязан',''];
+ let h=`<div class="g acc pad" id="bandcard"><div class="row"><span class="mark" style="color:var(--mark)">${ic('watch',34)}</span><div style="flex:1;min-width:0"><div class="h3">${dv?dv.name:'Браслет'}</div><div class="cap ${stat[1]}">${stat[0]}</div></div></div>`;
+ if(c=='ready'){const st=b.steps;
+  h+=`<div class="grid3" style="margin-top:14px">${[['Заряд',b.bat!=null?b.bat+'%':'…'],['Шаги',st?st.steps.toLocaleString('ru'):'…'],['Расход',st?Math.round(st.kcal)+' ккал':'…']].map(x=>`<div><div class="cap">${x[0]}</div><div class="bs">${x[1]}</div></div>`).join('')}</div>
+  <div class="row" style="margin-top:16px;align-items:center"><span style="color:var(--low)">${ic('heart',28)}</span><div style="flex:1"><div class="cap">Пульс сейчас</div><div class="h3">${b.hr?b.hr+' уд/мин':{start:'измеряю…',notwear:'браслет не на руке',busy:'браслет занят, попробуйте позже',off:'нет связи'}[b.hrs]||'—'}</div></div><button class="btnG g" style="width:128px;height:44px" data-band="hr">${s.hr?'Стоп':'Измерить'}</button></div>
+  <div class="row" style="gap:8px;margin-top:14px"><button class="btnG g" style="flex:1;height:44px" data-band="sync">Обновить</button><button class="btnG g" style="flex:1;height:44px" data-band="disconnect">Отключить</button></div>`;
+ }else{
+  if(b.list.length&&c!='connecting')h+=`<div class="over" style="margin:16px 0 6px">Рядом</div>`+b.list.slice(0,8).map(d=>`<button class="row" data-band="connect" data-addr="${d.addr}" style="width:100%;padding:10px 0;border-top:1px solid var(--stroke);text-align:left"><div style="flex:1"><div class="bs">${d.name}</div><div class="cap">${d.addr}</div></div><span class="cap">${d.rssi>-60?'близко':d.rssi>-75?'рядом':'далеко'}</span></button>`).join('');
+  h+=`<button class="btnL" style="width:100%;margin-top:14px" data-band="${c=='scanning'?'stopScan':'scan'}">${c=='scanning'?'Остановить поиск':c=='connecting'?'Подключаюсь…':'Найти браслет'}</button>`;
+  if(c!='scanning'&&c!='connecting')h+=`<div class="cap" style="margin-top:10px">Закройте приложение H Band, если оно открыто: браслет держит связь только с одним приложением</div>`;
+ }
+ if(b.err)h+=`<div class="cap" style="margin-top:10px;color:var(--low)">${b.err}</div>`;
+ return h+`<div class="row" style="justify-content:space-between;margin-top:12px">${s.saved?`<button class="cap" data-band="forget">Отвязать</button>`:'<span></span>'}<button class="cap" data-band="sdk">Диагностика SDK</button></div></div>`}
+function bandPaint(){const el=$('#bandcard');if(el)el.outerHTML=bandCard()}
+window.onBand=m=>{const b=BAND;switch(m.type){case'state':b.st=m;if(m.battery!=null)b.bat=m.battery;if(m.conn!='ready'){b.hr=null}if(m.conn=='scanning'||m.conn=='connecting')b.err='';break;case'devices':b.list=m.list;break;case'battery':b.bat=m.value;break;case'steps':b.steps=m;break;case'hr':b.hrs=m.state;b.hr=m.state=='live'?m.bpm:m.state=='stop'?b.hr:null;b.st.hr=m.state=='live'||m.state=='start';break;case'sync':b.sync=m;b.st.syncing=m.state!='done';break;case'day':b.day[m.date]=m;break;case'error':b.err=m.text;break}bandPaint()};
+document.addEventListener('click',e=>{const t=e.target.closest('[data-band]');if(!t)return;const c=t.dataset.band;if(c=='connect')bandCmd('connect',{addr:t.dataset.addr});else if(c=='hr')bandCmd('hr',{on:!BAND.st.hr});else bandCmd(c)});
+if(window.VITALS_NATIVE)setTimeout(()=>bandCmd('state'),300);
+const BANDMOCK=()=>`<div class="g acc pad"><div class="row"><span class="mark" style="color:var(--mark)">${ic('watch',34)}</span><div><div class="h3">Браслет Vitals #047</div><div class="cap good">синхронизирован 2 мин назад</div></div></div><div class="grid3" style="margin-top:14px">${[['Заряд','64%'],['Прошивка','1.4.2'],['Ношение','24/7']].map(s=>`<div><div class="cap">${s[0]}</div><div class="bs">${s[1]}</div></div>`).join('')}</div></div>`;
+S.devices=()=>`${hdr('back','Источники данных')}${window.VITALS_NATIVE?bandCard():BANDMOCK()}
  <div class="over" style="margin:22px 4px 10px">Подключено</div>${list([{i:'heart',t:'Apple Health',s:'шаги, вес, тренировки Garmin',tg:'apple'},{i:'dumb',t:'Garmin Connect',s:'тренировки и пульс · только чтение',tg:'garmin'},{i:'drop',t:'Весы Xiaomi',s:'вес и процент жира',tg:'scale'},{i:'cal',t:'Календарь',s:'план дня учтёт встречи',tg:'cal'}])}
  <div class="cap" style="margin-top:14px">Garmin или Apple Watch снимать не нужно: браслет можно носить на другой руке или только ночью</div>`;
 S.healthprof=()=>`${hdr('back','Профиль здоровья')}${list([{t:'Дата рождения',v:'17.02.1986'},{t:'Рост',v:(FEED&&FEED.profile&&FEED.profile.height_cm?Math.round(FEED.profile.height_cm):182)+' см'},{t:'Вес',v:VV.weight+' кг'},{t:'Пол',v:'мужской'}])}
