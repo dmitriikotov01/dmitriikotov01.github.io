@@ -225,7 +225,7 @@ const openQ=()=>st.advQ.filter(q=>!st.answered[q.id]).length;
 
 // ---------- screens ----------
 const S={};
-S.today=()=>{const hr=56+Math.round(Math.random()*5);const plan=st.plan.map((p,i)=>p.s==='pin'?'':`<div class="pi ${p.s} tap" data-plan="${i}" data-ev="${i}"><span class="dot"></span>${p.coach?`<span class="ava">${p.coach}</span>`:`<span class="${p.s==='done'?'c3':''}">${ic(p.i,20)}</span>`}<div style="min-width:0"><div class="bs t">${p.t}</div><div class="mic ${p.s==='now'?'mark':''}" style="${p.s==='now'?'color:var(--mark)':''}">${p.s==='now'?'сейчас · ':''}${p.sub}</div></div>${p.s==='now'?`<button class="chk" data-done="${i}" aria-label="Отметить">${ic('check',18)}</button>`:`<span class="c3" style="margin-left:auto">${ic('chev',16)}</span>`}</div>`).join('');
+S.today=()=>{const hr=window.VITALS_NATIVE&&bandHrNow()!=null?bandHrNow():56+Math.round(Math.random()*5);const plan=st.plan.map((p,i)=>p.s==='pin'?'':`<div class="pi ${p.s} tap" data-plan="${i}" data-ev="${i}"><span class="dot"></span>${p.coach?`<span class="ava">${p.coach}</span>`:`<span class="${p.s==='done'?'c3':''}">${ic(p.i,20)}</span>`}<div style="min-width:0"><div class="bs t">${p.t}</div><div class="mic ${p.s==='now'?'mark':''}" style="${p.s==='now'?'color:var(--mark)':''}">${p.s==='now'?'сейчас · ':''}${p.sub}</div></div>${p.s==='now'?`<button class="chk" data-done="${i}" aria-label="Отметить">${ic('check',18)}</button>`:`<span class="c3" style="margin-left:auto">${ic('chev',16)}</span>`}</div>`).join('');
  const done=st.plan.filter(p=>p.s==='done').length;
  return `${hdr('ava',VV.date)}
  <div style="text-align:center" class="tap" data-go="factors"><div class="over">Готовность</div><div style="position:relative;width:220px;height:220px;margin:12px auto 0">${glintRing(220,6,VV.ready/100,'var(--high)')}<div style="position:absolute;inset:0;display:grid;place-items:center"><div><div class="num" style="font-size:104px">${VV.ready}</div><div class="mic">из 100</div></div></div></div>
@@ -661,7 +661,7 @@ S.books=()=>`${hdr('back','Библиотека')}<div class="cap">Книги, �
  ${['стресс','практики','сон','фокус'].map(t=>`${sec({стресс:'Справиться со стрессом',практики:'Практики',сон:'Сон',фокус:'Фокус'}[t])}<div class="stack" style="gap:10px">${BOOKS.filter(b=>b[4]===t).map(b=>`<div class="g pad row" style="border-radius:24px;align-items:flex-start;gap:14px">${bookCover(b,64)}<div style="min-width:0;flex:1"><div class="bs">${b[0]}</div><div class="mic">${b[1]}</div><div class="cap" style="margin-top:4px">${b[2]}</div><button class="chip" style="margin-top:8px" data-toast="Откроется магазин-партнёр">Купить</button></div></div>`).join('')}</div>`).join('')}`;
 
 // ---------- Pulse hub, sleeping pulse, blood pressure ----------
-S.hr=()=>{const M=MX.hr;return `${hdr('back','Пульс')}${(()=>{const Hd=pHead('hr',PCFG.hr),o=pst('hr').o,mm=VV.hrRange(o);return `<div class="cap">${Hd.today&&!FEED?'Сейчас':capFirst(Hd.lbl)}</div><div class="row" style="align-items:baseline"><span class="num" style="font-size:76px">${Hd.today&&!FEED?57:rnd(Hd.v)}</span><span class="h3 c2">уд/мин</span></div><div class="bs good">${FEED?'пульс покоя':'в покое'}${Hd.day&&mm?` · за день от ${mm[0]} до ${mm[1]}`:''}</div>`})()}
+S.hr=()=>{const M=MX.hr;return `${hdr('back','Пульс')}${(()=>{const Hd=pHead('hr',PCFG.hr),o=pst('hr').o,mm=VV.hrRange(o);return `<div class="cap">${Hd.today&&(!FEED||window.VITALS_NATIVE&&bandHrNow()!=null)?'Сейчас':capFirst(Hd.lbl)}</div><div class="row" style="align-items:baseline"><span class="num" style="font-size:76px">${Hd.today&&window.VITALS_NATIVE&&bandHrNow()!=null?bandHrNow():Hd.today&&!FEED?57:rnd(Hd.v)}</span><span class="h3 c2">уд/мин</span></div><div class="bs good">${FEED?'пульс покоя':'в покое'}${Hd.day&&mm?` · за день от ${mm[0]} до ${mm[1]}`:''}</div>`})()}
  ${pChart('hr',PCFG.hr)}
  ${sec('Всё о сердце')}<div class="grid2">${[['Пульс покоя',MX.rhr.v,'уд/мин',MX.rhr.st,'good','rhr'],['Пульс во сне',Math.round(PCFG.shr.daily(0)),'уд/мин','средний за ночь','good','shr'],['ВСР',MX.metric.v,'мс',MX.metric.st,'good','metric'],['Давление',st.bp[0].s+'/'+st.bp[0].d,'мм рт. ст.',bpCat(st.bp[0]).t,bpCat(st.bp[0]).c,'bp']].map(t=>`<div class="g pad tap" data-go="${t[5]}" style="border-radius:24px"><div class="cap">${t[0]}</div><div><span class="num" style="font-size:34px">${t[1]}</span> <span class="mic">${t[2]}</span></div><div class="mic ${t[4]}">${t[3]}</div></div>`).join('')}</div>
  <div class="g pad tap" data-go="zones" style="margin-top:12px;border-radius:24px"><div class="between"><span class="bs">Пульсовые зоны · сегодня</span><span class="c3">${ic('chev',14)}</span></div>${zonesCalc().slice().reverse().map((q,j)=>{const mm=[38,24,12,6,2][4-j];return `<div class="row" style="margin-top:10px;gap:10px"><span class="mic" style="width:120px"><b style="color:var(--tx);font-weight:500">${q.lo}–${q.hi}</b> ${q.name.toLowerCase()}</span><div style="flex:1;height:8px;border-radius:4px;background:var(--div);position:relative"><i style="position:absolute;left:0;top:0;bottom:0;width:${mm/40*100}%;border-radius:4px;background:${q.col}"></i></div><span class="mic" style="width:44px;text-align:right">${mm} мин</span></div>`}).join('')}<div class="mic" style="margin-top:8px">Макс. пульс ${zmax()} · покой ${st.zs.rest} · по резерву пульса</div></div>
@@ -837,7 +837,7 @@ function bandCard(){const b=BAND,s=b.st,c=s.conn,dv=s.device;
  if(b.err)h+=`<div class="cap" style="margin-top:10px;color:var(--low)">${b.err}</div>`;
  return h+`<div class="row" style="justify-content:space-between;margin-top:12px">${s.saved?`<button class="cap" data-band="forget">Отвязать</button>`:'<span></span>'}<button class="cap" data-band="sdk">Диагностика SDK</button></div></div>`}
 function bandPaint(){const el=$('#bandcard');if(el)el.outerHTML=bandCard()}
-window.onBand=m=>{const b=BAND;switch(m.type){case'state':b.st=m;if(m.battery!=null)b.bat=m.battery;if(m.conn!='ready'){b.hr=null}if(m.conn=='scanning'||m.conn=='connecting')b.err='';break;case'devices':b.list=m.list;break;case'battery':b.bat=m.value;break;case'steps':b.steps=m;break;case'hr':b.hrs=m.state;b.hr=m.state=='live'?m.bpm:m.state=='stop'?b.hr:null;b.st.hr=m.state=='live'||m.state=='start';break;case'sync':b.sync=m;b.st.syncing=m.state!='done';break;case'day':b.day[m.date]=m;bandSave();setTimeout(bandSleepRepaint,0);break;case'error':b.err=m.text;break}bandPaint()};
+window.onBand=m=>{const b=BAND;switch(m.type){case'state':b.st=m;if(m.battery!=null)b.bat=m.battery;if(m.conn!='ready'){b.hr=null}if(m.conn=='scanning'||m.conn=='connecting')b.err='';break;case'devices':b.list=m.list;break;case'battery':b.bat=m.value;break;case'steps':b.steps=m;setTimeout(bandSleepRepaint,0);break;case'hr':b.hrs=m.state;b.hr=m.state=='live'?m.bpm:m.state=='stop'?b.hr:null;b.st.hr=m.state=='live'||m.state=='start';if(b.hr){MX.hr.v=b.hr;const e=$('#hr');if(e)e.textContent=b.hr}break;case'sync':b.sync=m;b.st.syncing=m.state!='done';break;case'day':b.day[m.date]=m;bandSave();setTimeout(bandSleepRepaint,0);break;case'error':b.err=m.text;break}bandPaint()};
 document.addEventListener('click',e=>{const t=e.target.closest('[data-band]');if(!t)return;const c=t.dataset.band;if(c=='connect')bandCmd('connect',{addr:t.dataset.addr});else if(c=='hr')bandCmd('hr',{on:!BAND.st.hr});else bandCmd(c)});
 if(window.VITALS_NATIVE)setTimeout(()=>bandCmd('state'),300);
 // Sleep from the bracelet (only inside the Vitals iPhone app): the last band night replaces the feed night on «Сон», «Сегодня» and the morning report.
@@ -845,7 +845,7 @@ if(window.VITALS_NATIVE)setTimeout(()=>bandCmd('state'),300);
 const BSTG={basic:{0:'l',1:'d',2:'a'},accurate:{0:'d',1:'l',2:'r',3:'a',4:'a'}},BKEY={d:'deep',l:'light',r:'rem',a:'awake'};
 let BN={},BN0=null,BNkey='';
 if(window.VITALS_NATIVE){try{Object.assign(BAND.day,JSON.parse(localStorage.getItem('vitals-band-day')||'{}'))}catch(e){}}
-function bandSave(){try{const ks=Object.keys(BAND.day).sort().slice(-14),o={};ks.forEach(k=>o[k]=BAND.day[k]);localStorage.setItem('vitals-band-day',JSON.stringify(o))}catch(e){}}
+function bandSave(){try{const ks=Object.keys(BAND.day).sort().slice(-365),o={};ks.forEach(k=>o[k]=BAND.day[k]);localStorage.setItem('vitals-band-day',JSON.stringify(o))}catch(e){}}
 const bIso=d=>`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
 const bShift=(iso,n)=>{const [y,m,d]=iso.split('-').map(Number);return bIso(new Date(y,m-1,d+n))};
 const bAbs=(iso,min)=>{const [y,m,d]=iso.split('-').map(Number);return new Date(y,m-1,d).getTime()/6e4+min};
@@ -867,16 +867,42 @@ function bandNights(){const segs=[],seen={};for(const iso in BAND.day)for(const 
   const night={...n,bed,wake:wm+(wm<bed?1440:0),src:'band',hr:bandHr(t0,t1)};night.seq=full&&seq.length?seq:seqFrom(night);
   const iso=bIso(end),old=out[iso];if(!old||tot(night)>tot(old))out[iso]=night}
  return out}
-function bandSleepApply(){if(!window.VITALS_NATIVE)return false;const bn=bandNights(),key=JSON.stringify(bn);if(key===BNkey)return false;BNkey=key;BN=bn;
+function bandSleepApply(){if(!window.VITALS_NATIVE)return false;const bn=bandNights(),key=JSON.stringify(bn)+JSON.stringify(Object.keys(BAND.day).map(k=>[k,(BAND.day[k].halfHour||[]).length]))+(BAND.steps?BAND.steps.steps:'');if(key===BNkey)return false;BNkey=key;BN=bn;
  if(!BN0)BN0={night,sl:VV.sl,sleepTxt:VV.sleepTxt,sleep:VV.sleep};
  // the band night is dated by the real calendar: move «today» forward when the feed is older than last night
- const isos=Object.keys(BN).sort(),last=isos[isos.length-1];if(last&&last>isoOf(TODAY)){const r=new Date();TODAY=new Date(r.getFullYear(),r.getMonth(),r.getDate());VV.date=`${DOWF[TODAY.getDay()]}, ${TODAY.getDate()} ${MONG[TODAY.getMonth()]}`}
+ const isos=Object.keys(BN).concat(Object.keys(BAND.day)).sort(),last=isos[isos.length-1];if(last&&last>isoOf(TODAY)){const r=new Date();TODAY=new Date(r.getFullYear(),r.getMonth(),r.getDate());VV.date=`${DOWF[TODAY.getDay()]}, ${TODAY.getDate()} ${MONG[TODAY.getMonth()]}`}
  night=k=>BN[isoOf(tday(-k))]||BN0.night(k);
  const n=BN[isoOf(TODAY)];
  if(n){const t=tot(n),sc=sScore(n),w=sWord(sc);VV.sl={asleep:hm(t),bed:clock(n.bed),wake:clock(n.wake),word:w,score:sc,hr:n.hr?n.hr.avg:null};VV.sleepTxt=`${Math.floor(t/60)} ч ${t%60} мин`;VV.sleep={...(BN0.sleep||{}),score:sc,word:w,insights:sInsight(n)}}
  else{VV.sl=BN0.sl;VV.sleepTxt=BN0.sleepTxt;VV.sleep=BN0.sleep}
- return true}
-function bandSleepRepaint(){if(!bandSleepApply())return;const name=st.stack.length?st.stack[st.stack.length-1]:st.tab;if(['today','sleep','sleepreg','sleepneed'].includes(name))render(true);if($('#layer .morning'))morning()}
+ bandMerge();return true}
+// Bracelet days merged into the history: a day with band data takes pulse, steps and calories from the band, older days stay on Garmin / the feed
+const bDay=iso=>BAND.day[iso]&&BAND.day[iso].halfHour&&BAND.day[iso].halfHour.length?BAND.day[iso].halfHour:null;
+const bNowH=()=>{const d=new Date();return d.getHours()};
+function bandHrNow(){if(BAND.hr)return BAND.hr;const h=bDay(isoOf(new Date()));if(!h)return null;for(let i=h.length-1;i>=0;i--)if(h[i].hr>0)return h[i].hr;return null}
+function bHrVals(iso){const h=bDay(iso);return h?h.filter(x=>x.hr>0).map(x=>x.hr):[]}
+function bHourly(iso,today,f,cumul){const h=bDay(iso);if(!h)return null;const n=today?bNowH()+1:24,v=Array(n).fill(null);
+ for(const x of h){const hh=+String(x.t).slice(0,2);if(hh>=n)continue;const y=f(x);if(y==null)continue;v[hh]=cumul?(v[hh]||0)+y:(v[hh]==null?y:Math.round((v[hh]+y)/2))}
+ if(cumul){let s=0;return v.map(x=>s+=x||0)}
+ if(v.every(x=>x==null))return null;let last=v.find(x=>x!=null);return v.map(x=>x==null?last:(last=x))}
+function bSteps(iso){const h=bDay(iso);let s=h?h.reduce((a,x)=>a+(x.steps||0),0):null;if(iso===isoOf(new Date())&&BAND.steps)s=Math.max(s||0,BAND.steps.steps);return s}
+function bKcal(iso){const h=bDay(iso);let s=h?h.reduce((a,x)=>a+(x.kcal||0),0):null;if(iso===isoOf(new Date())&&BAND.steps)s=Math.max(s||0,BAND.steps.kcal);return s}
+let BP0=null;
+function bandMerge(){if(!window.VITALS_NATIVE)return;const P=PCFG;
+ if(!BP0){BP0={};for(const k of ['hr','rhr','shr','steps','kcal'])BP0[k]={daily:P[k].daily,day:P[k].day,dailyTot:P[k].dailyTot};BP0.hrRange=VV.hrRange;BP0.mx={hr:MX.hr.v,rhr:MX.rhr.v};BP0.vsteps=VV.steps;BP0.vkcal=VV.kcal;BP0.vkcalA=VV.kcalA}
+ const I=k=>isoOf(tday(-k)),rest=(()=>{const a=[];for(let k=1;k<=30;k++){const x=BP0.kcal.daily(k);if(x&&x[0]!=null)a.push(x[0])}return a.length?Math.round(a.reduce((s,x)=>s+x,0)/a.length):null})();
+ const rhrOf=iso=>{const n=BN[iso];if(n&&n.hr)return n.hr.min;const v=bHrVals(iso);return v.length?Math.min(...v):null};
+ P.hr.daily=k=>{const v=rhrOf(I(k));return v!=null?v:BP0.hr.daily(k)};P.hr.day=o=>bHourly(I(o),o===0,x=>x.hr>0?x.hr:null)||BP0.hr.day(o);
+ P.rhr.daily=k=>{const v=rhrOf(I(k));return v!=null?v:BP0.rhr.daily(k)};
+ P.shr.daily=k=>{const n=BN[I(k)];return n&&n.hr?n.hr.avg:BP0.shr.daily(k)};
+ P.steps.daily=k=>{const v=bSteps(I(k));return v!=null?v:BP0.steps.daily(k)};P.steps.day=o=>bHourly(I(o),o===0,x=>x.steps||0,true)||BP0.steps.day(o);
+ P.kcal.daily=k=>{const a=bKcal(I(k));if(a==null)return BP0.kcal.daily(k);const od=BP0.kcal.daily(k),r=od&&od[0]!=null?od[0]:rest;return r==null?null:[r,Math.round(a)]};
+ P.kcal.dailyTot=k=>{const x=P.kcal.daily(k);return x?x[0]+x[1]:null};
+ VV.hrRange=o=>{const v=bHrVals(I(o));return v.length?[Math.min(...v),Math.max(...v)]:BP0.hrRange(o)};
+ const t=isoOf(TODAY),r0=rhrOf(t);MX.rhr.v=r0!=null?r0:BP0.mx.rhr;const hn=bandHrNow();MX.hr.v=hn!=null?hn:BP0.mx.hr;
+ const s0=bSteps(t);VV.steps=s0!=null?s0:BP0.vsteps;const k0=P.kcal.daily(0);if(bKcal(t)!=null&&k0){VV.kcal=k0[0]+k0[1];VV.kcalA=k0[1]}else{VV.kcal=BP0.vkcal;VV.kcalA=BP0.vkcalA}}
+
+function bandSleepRepaint(){if(!bandSleepApply())return;const name=st.stack.length?st.stack[st.stack.length-1]:st.tab;if(['today','sleep','sleepreg','sleepneed','hr','rhr','shr','steps','kcal','activity'].includes(name))render(true);if($('#layer .morning'))morning()}
 
 const BANDMOCK=()=>`<div class="g acc pad"><div class="row"><span class="mark" style="color:var(--mark)">${ic('watch',34)}</span><div><div class="h3">Браслет Vitals #047</div><div class="cap good">синхронизирован 2 мин назад</div></div></div><div class="grid3" style="margin-top:14px">${[['Заряд','64%'],['Прошивка','1.4.2'],['Ношение','24/7']].map(s=>`<div><div class="cap">${s[0]}</div><div class="bs">${s[1]}</div></div>`).join('')}</div></div>`;
 S.devices=()=>`${hdr('back','Источники данных')}${window.VITALS_NATIVE?bandCard():BANDMOCK()}
@@ -1052,7 +1078,7 @@ document.addEventListener('click',e=>{const t=e.target.closest('button,[data-clo
 document.addEventListener('change',e=>{if(e.target.dataset&&e.target.dataset.ts!==undefined){st.ts=+e.target.value;save();render(true)}});
 document.addEventListener('input',e=>{if(e.target.dataset&&e.target.dataset.ts!==undefined){const v=+e.target.value,o=$('#tsv'),pv=$('#tsprev');if(o)o.textContent=v+'%';if(pv)pv.style.fontSize=Math.round(15*v/80)+'px';return}if(e.target.dataset&&e.target.dataset.mw){mwInit()[e.target.dataset.mw]=e.target.value;const o=$('#mwdur');if(o)o.innerHTML=mwDur();return}if(e.target.id==='portion'){const g=+e.target.value;const p=e.target.parentNode;p.querySelector('.num').innerHTML=g+'<span class="h3 c2"> г</span>';p.querySelector('.cap:last-of-type').textContent=Math.round(g*1.21)+' ккал · Б '+Math.round(g*.17)+' · Ж '+Math.round(g*.05)+' · У '+Math.round(g*.03)}});
 // live pulse on Today
-setInterval(()=>{const h=$('#hr');if(h){h.textContent=56+Math.round(Math.random()*5);const l=$('#live');if(l){l.style.opacity=l.style.opacity=='0.3'?'1':'0.3'}}},1500);
+setInterval(()=>{const h=$('#hr');if(h){const bh=window.VITALS_NATIVE?bandHrNow():null;h.textContent=bh!=null?bh:56+Math.round(Math.random()*5);const l=$('#live');if(l){l.style.opacity=l.style.opacity=='0.3'?'1':'0.3'}}},1500);
 // grain
 (function(){const c=$('#grain');const w=256,h=256;c.width=w;c.height=h;c.style.width='100%';c.style.height='100%';c.style.imageRendering='pixelated';const x=c.getContext('2d'),d=x.createImageData(w,h);for(let i=0;i<d.data.length;i+=4){const v=128+(Math.random()-.5)*200;d.data[i]=d.data[i+1]=d.data[i+2]=v;d.data[i+3]=255}x.putImageData(d,0,0);const u=c.toDataURL();c.remove();const g=document.createElement('div');g.className='grain';g.style.backgroundImage=`url(${u})`;g.style.backgroundSize='128px';document.querySelector('.bg').after(g)})();
 
