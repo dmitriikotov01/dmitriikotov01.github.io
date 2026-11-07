@@ -24,12 +24,12 @@
   --sat:max(env(safe-area-inset-top,0px),54px);
   color-scheme:dark;
 }
-:root[data-app="forest"]{--surface-card:#13241A;--surface-raised:#1C3225;--color-tab-bar:rgba(12,22,16,.75);--bgimg:none;--top:#3D5C4A;--mid:#1B2E23;--bottom:#050906;--cloud:#6E8C78;--hl:#93AE9A;--bar:rgba(12,22,16,.55);--deep:#2B2F8F;--light:#1C8C93;--rem:#4FE3CF;--hdr:#2E4A3A}
-:root[data-app="metal"]{--color-text-primary:#0B1530;--color-text-secondary:rgba(11,21,48,.72);--color-glass-stroke:rgba(11,21,48,.1);--color-glass-fill-strong:rgba(255,255,255,.7);--surface-card:rgba(255,255,255,.78);--surface-raised:#fff;--color-tab-bar:rgba(255,255,255,.8);--color-divider:rgba(11,21,48,.1);--bgimg:none;--top:#F9F9FA;--mid:#E6E8EB;--bottom:#D6D9DE;--cloud:#fff;--hl:#fff;
+:root[data-app="forest"]{--color-text-secondary:rgba(255,255,255,.82);--surface-card:#12241A;--surface-raised:#1A3226;--color-tab-bar:rgba(12,22,16,.75);--bgimg:radial-gradient(62.2% 20.6% at 52.2% 84.7%,rgba(3,6,4,.7),rgba(3,6,4,.315) 55%,transparent),radial-gradient(39.8% 24% at -2.5% 58.4%,rgba(12,22,16,.6),rgba(12,22,16,.27) 55%,transparent),radial-gradient(37.3% 14.9% at 79.6% 41.2%,rgba(147,174,154,.4),rgba(147,174,154,.18) 55%,transparent),radial-gradient(57.2% 21.7% at 47.3% 28.3%,rgba(110,140,120,.55),rgba(110,140,120,.2475) 55%,transparent),linear-gradient(180deg,#3D5C4A 0%,#2F4A3B 30%,#1B2E23 56%,#0D1812 80%,#050906 100%);--top:#3D5C4A;--mid:#1B2E23;--bottom:#050906;--cloud:#6E8C78;--hl:#93AE9A;--bar:rgba(12,22,16,.55);--deep:#2B2F8F;--light:#1C8C93;--rem:#4FE3CF;--hdr:#2E4A3A}
+:root[data-app="metal"]{--color-text-primary:#0B1530;--color-text-secondary:rgba(11,21,48,.78);--color-glass-stroke:rgba(11,21,48,.12);--color-glass-fill-strong:rgba(255,255,255,.85);--surface-card:#fff;--surface-raised:#EEF0F4;--color-tab-bar:rgba(255,255,255,.75);--color-divider:rgba(11,21,48,.1);--bgimg:radial-gradient(52.2% 17.2% at 49.8% 88.1%,rgba(19,35,74,.16),rgba(19,35,74,.072) 55%,transparent),radial-gradient(49.8% 21.7% at 54.7% 24%,rgba(255,255,255,.95),rgba(255,255,255,.4275) 55%,transparent),linear-gradient(114.7deg,#F9F9FA 0%,#E1E3E7 21.429%,#F4F5F7 37.143%,#D6D9DE 55.714%,#ECEDF0 71.429%);--top:#F9F9FA;--mid:#E6E8EB;--bottom:#D6D9DE;--cloud:#fff;--hl:#fff;
   --glass:rgba(255,255,255,.62);--glass2:rgba(255,255,255,.85);--stroke:rgba(255,255,255,.95);--stroke2:#fff;
   --tx:#0B1530;--tx2:rgba(11,21,48,.62);--tx3:rgba(11,21,48,.42);--div:rgba(11,21,48,.1);
-  --lime:#24408A;--mark:#7D9400;--onlime:#E7FF51;--knob:#24408A;--knobi:#E7FF51;--link:#24408A;--bar:rgba(255,255,255,.75);
-  --high:#2E7FD6;--awake:#7D9400;--hdr:#1B2F66;color-scheme:light}
+  --lime:#24408A;--mark:#5E7000;--onlime:#E7FF51;--knob:#24408A;--knobi:#E7FF51;--link:#24408A;--bar:rgba(255,255,255,.75);
+  --good:#147A4A;--high:#1D66B5;--awake:#7D9400;--hdr:#1B2F66;color-scheme:light}
 html,body{height:var(--appH,100%);overflow:hidden;background:var(--bottom);color:var(--tx);font-family:var(--f)}
 body{overflow:hidden}
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
@@ -41,8 +41,11 @@ button{font:inherit;color:inherit;background:none;border:0;padding:0;cursor:poin
 :root:not([data-app]) .bg{background:var(--bgimg)}:root:not([data-app]) .bg::before,:root:not([data-app]) .bg::after{display:none}
 .bg::before{content:"";position:absolute;width:120%;height:46%;left:-10%;top:4%;background:radial-gradient(closest-side,var(--cloud),transparent);opacity:.55;filter:blur(30px)}
 .bg::after{content:"";position:absolute;width:80%;height:30%;right:-15%;top:26%;background:radial-gradient(closest-side,var(--hl),transparent);opacity:.4;filter:blur(30px)}
-:root[data-app="metal"] .bg{background:linear-gradient(135deg,#F9F9FA 0%,#E1E3E7 30%,#F4F5F7 52%,#D6D9DE 78%,#ECEDF0 100%)}
-:root[data-app="metal"] .bg::before{opacity:.9}
+:root[data-app="metal"][data-acc="lime"]{--lime:#E7FF51;--onlime:#0C0D0F;--knob:#E7FF51;--knobi:#0C0D0F;--link:#5E7000}
+:root[data-app] .bg{background:var(--bgimg)}:root[data-app="forest"] .bg::before,:root[data-app="forest"] .bg::after{display:none}
+:root[data-app="metal"] .bg::before{content:"";position:absolute;width:auto;height:auto;left:-60%;right:-60%;top:-30%;bottom:-30%;background:url(img/brush.png) 0 0/384px 384px;transform:rotate(14deg);mix-blend-mode:overlay;opacity:.55;filter:none}
+:root[data-app="metal"] .bg::after{content:"";position:absolute;width:899px;height:26px;left:calc(45.6% - 449.5px);right:auto;top:calc(67.68% - 13px);background:linear-gradient(180deg,rgba(255,255,255,0) 0%,rgba(255,255,255,.85) 45%,rgba(191,196,204,.6) 60%,rgba(255,255,255,0) 100%);transform:rotate(14deg);filter:blur(1.5px);opacity:.7}
+:root[data-app="metal"] .grain{opacity:.08}
 .grain{position:absolute;inset:0;mix-blend-mode:overlay;opacity:.13;pointer-events:none}
 .scroll{position:absolute;inset:0;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:var(--sat) max(16px,env(safe-area-inset-right,0px)) 132px max(16px,env(safe-area-inset-left,0px))}
 .scroll::-webkit-scrollbar{display:none}
@@ -130,7 +133,7 @@ svg.i{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:1.6;stro
 .tab{min-width:0;height:66px;display:flex;flex-direction:column;align-items:center;justify-content:flex-start;padding-top:12.9px;gap:2px;position:relative;color:var(--color-text-secondary)}.tab svg.i{stroke-width:1.6}.tab .tl{font-size:11px;font-weight:500;line-height:14px;white-space:nowrap}
 .tab.on,.tab.on .tl{color:var(--lime)}
 .plus{justify-self:center;width:52px;height:52px;margin-top:7px;border-radius:26px;background:var(--lime);color:var(--onlime);display:grid;place-items:center}.plus svg.i{stroke-width:2.0167}
-:root[data-app="metal"] .plus svg{color:#E7FF51}
+:root[data-app="metal"] .plus svg{color:var(--onlime)}
 /* sheet */
 .veil{position:absolute;inset:0;backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);background:rgba(0,0,0,.2);z-index:30;animation:fade .2s}
 @keyframes fade{from{opacity:0}}
@@ -165,7 +168,7 @@ svg.i{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:1.6;stro
 .ava{width:28px;height:28px;border-radius:14px;border:1.2px solid var(--mark);display:grid;place-items:center;font-size:10px;font-weight:500;background:var(--glass2);flex:none}
 /* advisor */
 .norma{width:28px;height:28px;border-radius:14px;background:var(--lime);color:var(--onlime);display:grid;place-items:center;flex:none}
-:root[data-app="metal"] .norma{color:#E7FF51}
+:root[data-app="metal"]:not([data-acc]) .norma{color:#E7FF51}
 .toast{position:absolute;left:50%;transform:translateX(-50%);top:calc(env(safe-area-inset-top,0px) + 14px);z-index:50;padding:12px 18px;border-radius:22px;font-size:13px;white-space:nowrap;animation:fade .2s}
 .bar{height:4px;border-radius:2px;background:var(--div);position:relative;overflow:visible}
 .bar>i{position:absolute;left:0;top:0;bottom:0;border-radius:2px;background:var(--mark)}
@@ -230,7 +233,7 @@ const st={tab:'today',stack:[],theme:'blue',water:1.2,eaten:1420,goal:2100,advQ:
 st.ts=80;st.tw='n';st.ptab='p';
 try{const s=JSON.parse(localStorage.getItem('vitals-proto')||'{}');if(s.theme)st.theme=s.theme;if(s.ts)st.ts=s.ts;if(s.tw)st.tw=s.tw;}catch(e){}
 const save=()=>{try{localStorage.setItem('vitals-proto',JSON.stringify({theme:st.theme,ts:st.ts,tw:st.tw}))}catch(e){}};
-function applyTheme(){document.documentElement.dataset.app=st.theme==='blue'?'':st.theme;if(st.theme==='blue')delete document.documentElement.dataset.app;}
+function applyTheme(){const de=document.documentElement;de.dataset.app=st.theme==='light'?'metal':st.theme;if(st.theme==='blue')delete de.dataset.app;if(st.theme==='light')de.dataset.acc='lime';else delete de.dataset.acc;}
 
 // ---------- helpers ----------
 // Readiness ring with a game-style glint every 5 s: a tiny star sprite (bright core, soft halo, thin cross rays) flashes on the arc,
@@ -849,8 +852,8 @@ const settingsTab=()=>`<div class="over" style="margin:4px 4px 10px">Текст<
  <div class="row" style="gap:12px;margin-top:14px"><span data-tsfix style="font-size:13px">A</span><div style="flex:1;position:relative"><input type="range" class="tsr" min="80" max="130" step="10" value="${st.ts}" data-ts aria-label="Размер текста"><div class="between" style="padding:0 9px;margin-top:2px">${TSZ.map(v=>`<i style="width:2px;height:6px;border-radius:1px;background:${v<=st.ts?'var(--mark)':'var(--div)'}"></i>`).join('')}</div></div><span data-tsfix style="font-size:26px">A</span></div>
  <div class="mic" style="margin-top:8px">80% — стандартный размер · до 130%</div></div>
  <div class="g pad" style="margin-top:12px"><div class="bs">Начертание</div><div class="seg g" style="margin-top:10px">${Object.entries(TW).map(([k,v])=>`<button class="${st.tw===k?'on':''}" data-tw="${k}" data-tsfix style="font-weight:${Math.max(100,Math.min(700,300+v[1]))}">${v[0]}</button>`).join('')}</div></div>
- ${pgroups([['Оформление',[['moon','Тема оформления',{blue:'Синяя',forest:'Зелёная',metal:'Металл'}[st.theme],'theme']]],['Уведомления',[['spark','Утренний отчёт',`до ${st.mr.until}:00 · ${MR.filter(x=>st.mr[x[0]]).length} разделов`,'mrset'],['bell','Уведомления','3 новых','notif']]],['Устройства и измерения',[['watch','Браслет и источники','браслет #047 · Apple Health','devices'],['pulse','Пульсовые зоны',`${st.zs.method==='hrr'?'по резерву пульса':st.zs.method==='max'?'по макс. пульсу':'вручную'} · макс. ${zmax()}`,'zonesettings']]],['Приватность',[['lock','Приватность и доступ','рейтинг, тренер, экспорт данных','privacy']]]])}`;
-S.theme=()=>`${hdr('back','Тема оформления')}<div class="stack">${[['blue','Синяя','основная','linear-gradient(180deg,#2F4180,#04070F)'],['forest','Зелёная','','linear-gradient(180deg,#3D5C4A,#050906)'],['metal','Шлифованный металл','синие кнопки','linear-gradient(135deg,#F9F9FA,#D6D9DE)']].map(t=>`<button class="g ${st.theme==t[0]?'acc':''}" data-theme="${t[0]}" style="display:flex;height:120px;border-radius:30px;overflow:hidden;text-align:left"><div style="flex:1;padding:18px;display:flex;flex-direction:column;justify-content:space-between"><div><div class="h3">${t[1]}</div><div class="cap">${t[2]}</div></div><span style="width:24px;height:24px;border-radius:12px;border:1.5px solid ${st.theme==t[0]?'var(--lime)':'var(--stroke2)'};background:${st.theme==t[0]?'var(--lime)':'transparent'}"></span></div><div style="width:120px;background:${t[3]}"></div></button>`).join('')}</div>`;
+ ${pgroups([['Оформление',[['moon','Тема оформления',{blue:'Тёмная',light:'Светлая',forest:'Лес',metal:'Металл'}[st.theme],'theme']]],['Уведомления',[['spark','Утренний отчёт',`до ${st.mr.until}:00 · ${MR.filter(x=>st.mr[x[0]]).length} разделов`,'mrset'],['bell','Уведомления','3 новых','notif']]],['Устройства и измерения',[['watch','Браслет и источники','браслет #047 · Apple Health','devices'],['pulse','Пульсовые зоны',`${st.zs.method==='hrr'?'по резерву пульса':st.zs.method==='max'?'по макс. пульсу':'вручную'} · макс. ${zmax()}`,'zonesettings']]],['Приватность',[['lock','Приватность и доступ','рейтинг, тренер, экспорт данных','privacy']]]])}`;
+S.theme=()=>`${hdr('back','Тема оформления')}<div class="stack">${[['blue','Тёмная','полуночный синий · основная','linear-gradient(180deg,#2F4180,#04070F)'],['light','Светлая','шлифованный металл · лаймовые кнопки','linear-gradient(114.7deg,#F9F9FA,#D6D9DE)'],['forest','Лес','лесной зелёный','linear-gradient(180deg,#3D5C4A,#050906)'],['metal','Металл','шлифованный металл · синие кнопки','linear-gradient(114.7deg,#F9F9FA,#D6D9DE)']].map(t=>`<button class="g ${st.theme==t[0]?'acc':''}" data-theme="${t[0]}" style="display:flex;height:120px;border-radius:30px;overflow:hidden;text-align:left"><div style="flex:1;padding:18px;display:flex;flex-direction:column;justify-content:space-between"><div><div class="h3">${t[1]}</div><div class="cap">${t[2]}</div></div><span style="width:24px;height:24px;border-radius:12px;border:1.5px solid ${st.theme==t[0]?'var(--lime)':'var(--stroke2)'};background:${st.theme==t[0]?'var(--lime)':'transparent'}"></span></div><div style="width:120px;background:${t[3]}"></div></button>`).join('')}</div>`;
 
 // ---------- more screens ----------
 const list=(items)=>`<div class="g" style="padding:4px 16px">${items.map((it,i)=>`<div class="row ${it.go?'tap':''}" ${it.go?`data-go="${it.go}"`:''} style="padding:12px 0;${i?'border-top:1px solid var(--div)':''}">${it.i?ic(it.i,20):''}<div style="min-width:0"><div class="b">${it.t}</div>${it.s?`<div class="cap ${it.c||''}" style="${it.c=='mark'?'color:var(--mark)':''}">${it.s}</div>`:''}</div>${it.tg!==undefined?`<button class="toggle ${st.tg[it.tg]?'on':''}" data-tg="${it.tg}" style="margin-left:auto" aria-label="${it.t}"></button>`:it.v?`<span class="bs" style="margin-left:auto;white-space:nowrap">${it.v}</span>`:`<span class="c3" style="margin-left:auto">${ic('chev',16)}</span>`}</div>`).join('')}</div>`;
