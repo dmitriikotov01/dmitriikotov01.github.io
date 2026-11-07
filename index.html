@@ -916,7 +916,7 @@ if(window.VITALS_NATIVE)setTimeout(()=>bandCmd('state'),300);
 const BSTG={basic:{0:'l',1:'d',2:'a'},accurate:{0:'d',1:'l',2:'r',3:'a',4:'a'}},BKEY={d:'deep',l:'light',r:'rem',a:'awake'};
 let BN={},BN0=null,BNkey='';
 if(window.VITALS_NATIVE){try{Object.assign(BAND.day,JSON.parse(localStorage.getItem('vitals-band-day')||'{}'))}catch(e){}}
-function bandSave(){try{const ks=Object.keys(BAND.day).sort().slice(-365),o={};ks.forEach(k=>o[k]=BAND.day[k]);localStorage.setItem('vitals-band-day',JSON.stringify(o))}catch(e){}}
+function bandSave(){try{const ks=Object.keys(BAND.day).sort().slice(-365),o={},keepRR=ks.slice(-3);ks.forEach(k=>{const d=BAND.day[k];if(d&&d.rr&&!keepRR.includes(k)){const c={...d};delete c.rr;o[k]=c;BAND.day[k]=c}else o[k]=d});localStorage.setItem('vitals-band-day',JSON.stringify(o))}catch(e){}}
 const bIso=d=>`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
 const bShift=(iso,n)=>{const [y,m,d]=iso.split('-').map(Number);return bIso(new Date(y,m-1,d+n))};
 const bAbs=(iso,min)=>{const [y,m,d]=iso.split('-').map(Number);return new Date(y,m-1,d).getTime()/6e4+min};
@@ -958,11 +958,23 @@ function bHourly(iso,today,f,cumul){const h=bDay(iso);if(!h)return null;const n=
  if(v.every(x=>x==null))return null;let last=v.find(x=>x!=null);return v.map(x=>x==null?last:(last=x))}
 function bSteps(iso){const h=bDay(iso);let s=h?h.reduce((a,x)=>a+(x.steps||0),0):null;if(iso===isoOf(new Date())&&BAND.steps)s=Math.max(s||0,BAND.steps.steps);return s}
 function bKcal(iso){const h=bDay(iso);let s=h?h.reduce((a,x)=>a+(x.kcal||0),0):null;if(iso===isoOf(new Date())&&BAND.steps)s=Math.max(s||0,BAND.steps.kcal);return s}
+// Extended band series (day.m5 / ox / hrv / temp): values inside last night's sleep window or the waking day
+const bMin=t=>{const [h,m]=String(t).split(':').map(Number);return h*60+m};
+function bNight(iso,key,f){const out=[],n=BN&&BN[iso],bed=n?n.bed:-60,wake=n?n.wake:7*60;const add=(d,lo,hi)=>{const day=BAND.day[d];for(const x of (day&&day[key])||[]){const m=bMin(x.t);if(m>=lo&&m<=hi){const v=f(x);if(v!=null&&v>0)out.push(v)}}};
+ if(bed<0)add(bShift(iso,-1),1440+bed,1440);add(iso,Math.max(0,bed),wake);return out}
+function bDayVals(iso,key,f,lo=7*60,hi=22*60){const out=[],day=BAND.day[iso];for(const x of (day&&day[key])||[]){const m=bMin(x.t);if(m>=lo&&m<=hi){const v=f(x);if(v!=null&&v>0)out.push(v)}}return out}
+const bAvg=a=>a.length?a.reduce((s,x)=>s+x,0)/a.length:null;
+const bandX={hrv:iso=>{const a=bNight(iso,'hrv',x=>+x.v);return a.length>=3?Math.round(bAvg(a)):null},
+ rhr:iso=>{const a=bNight(iso,'m5',x=>x.hr>=30?+x.hr:null);return a.length>=6?Math.min(...a):null},
+ spo2:iso=>{const a=bNight(iso,'ox',x=>+x.o>=70?+x.o:null);return a.length>=3?Math.round(bAvg(a)):null},
+ resp:iso=>{const a=bNight(iso,'ox',x=>+x.rr);return a.length>=3?Math.round(bAvg(a)*10)/10:null},
+ temp:iso=>{const a=bNight(iso,'temp',x=>+x.skin||+x.body);return a.length>=3?Math.round(bAvg(a)*10)/10:null},
+ stress:iso=>{const a=bDayVals(iso,'m5',x=>+x.st);return a.length>=6?Math.round(bAvg(a)):null}};
 let BP0=null;
 function bandMerge(){if(!window.VITALS_NATIVE)return;const P=PCFG;
- if(!BP0){BP0={};for(const k of ['hr','rhr','shr','steps','kcal'])BP0[k]={daily:P[k].daily,day:P[k].day,dailyTot:P[k].dailyTot};BP0.hrRange=VV.hrRange;BP0.mx={hr:MX.hr.v,rhr:MX.rhr.v};BP0.vsteps=VV.steps;BP0.vkcal=VV.kcal;BP0.vkcalA=VV.kcalA}
+ if(!BP0){BP0={};for(const k of ['hr','rhr','shr','steps','kcal','metric','stress'])BP0[k]={daily:P[k].daily,day:P[k].day,dailyTot:P[k].dailyTot};BP0.hrRange=VV.hrRange;BP0.mx={hr:MX.hr.v,rhr:MX.rhr.v,metric:MX.metric.v,stress:MX.stress.v};BP0.health={...VV.health};BP0.vsteps=VV.steps;BP0.vkcal=VV.kcal;BP0.vkcalA=VV.kcalA}
  const I=k=>isoOf(tday(-k)),rest=(()=>{const a=[];for(let k=1;k<=30;k++){const x=BP0.kcal.daily(k);if(x&&x[0]!=null)a.push(x[0])}return a.length?Math.round(a.reduce((s,x)=>s+x,0)/a.length):null})();
- const rhrOf=iso=>{const n=BN[iso];if(n&&n.hr)return n.hr.min;const v=bHrVals(iso);return v.length?Math.min(...v):null};
+ const rhrOf=iso=>{const r5=bandX.rhr(iso);if(r5!=null)return r5;const n=BN[iso];if(n&&n.hr)return n.hr.min;const v=bHrVals(iso);return v.length?Math.min(...v):null};
  P.hr.daily=k=>{const v=rhrOf(I(k));return v!=null?v:BP0.hr.daily(k)};P.hr.day=o=>bHourly(I(o),o===0,x=>x.hr>0?x.hr:null)||BP0.hr.day(o);
  P.rhr.daily=k=>{const v=rhrOf(I(k));return v!=null?v:BP0.rhr.daily(k)};
  P.shr.daily=k=>{const n=BN[I(k)];return n&&n.hr?n.hr.avg:BP0.shr.daily(k)};
@@ -970,7 +982,9 @@ function bandMerge(){if(!window.VITALS_NATIVE)return;const P=PCFG;
  P.kcal.daily=k=>{const a=bKcal(I(k));if(a==null)return BP0.kcal.daily(k);const od=BP0.kcal.daily(k),r=od&&od[0]!=null?od[0]:rest;return r==null?null:[r,Math.round(a)]};
  P.kcal.dailyTot=k=>{const x=P.kcal.daily(k);return x?x[0]+x[1]:null};
  VV.hrRange=o=>{const v=bHrVals(I(o));return v.length?[Math.min(...v),Math.max(...v)]:BP0.hrRange(o)};
- const t=isoOf(TODAY),r0=rhrOf(t);MX.rhr.v=r0!=null?r0:BP0.mx.rhr;const hn=bandHrNow();MX.hr.v=hn!=null?hn:BP0.mx.hr;
+ P.metric.daily=k=>{const v=bandX.hrv(I(k));return v!=null?v:BP0.metric.daily(k)};P.stress.daily=k=>{const v=bandX.stress(I(k));return v!=null?v:BP0.stress.daily(k)};
+ const t=isoOf(TODAY),r0=rhrOf(t);{const h=bandX.hrv(t),s=bandX.stress(t);MX.metric.v=h!=null?h:BP0.mx.metric;MX.stress.v=s!=null?s:BP0.mx.stress;
+  const H={...BP0.health},sp=bandX.spo2(t),rs=bandX.resp(t),tp=bandX.temp(t);if(h!=null)H.hrv=h;if(r0!=null)H.rhr=r0;if(sp!=null)H.spo2=sp;if(rs!=null)H.resp=rs;if(tp!=null)H.temp=String(tp).replace('.',',')+' °C';VV.health=H}MX.rhr.v=r0!=null?r0:BP0.mx.rhr;const hn=bandHrNow();MX.hr.v=hn!=null?hn:BP0.mx.hr;
  const s0=bSteps(t);VV.steps=s0!=null?s0:BP0.vsteps;const k0=P.kcal.daily(0);if(bKcal(t)!=null&&k0){VV.kcal=k0[0]+k0[1];VV.kcalA=k0[1]}else{VV.kcal=BP0.vkcal;VV.kcalA=BP0.vkcalA}}
 
 // ---- Band settings read from the bracelet (inside the Vitals app): why it vibrates, phone notifications, what it can measure
