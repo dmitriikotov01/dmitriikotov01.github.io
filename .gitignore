@@ -1,0 +1,15 @@
+# Публичный сайт. Сюда НЕЛЬЗЯ: приватное ядро, сырые данные, личные выгрузки.
+norma_core/
+norma/
+garmin_data/
+исторя*/
+*.py
+*.pyc
+__pycache__/
+norma_feed*.json
+DI_CONNECT/
+*.fit
+*.FIT
+*.zip
+*.csv
+.DS_Store
