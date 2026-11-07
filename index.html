@@ -99,6 +99,17 @@ button{font:inherit;color:inherit;background:none;border:0;padding:0;cursor:poin
 :root[data-rt],:root:not([data-rt-off]) {}
 :root[data-rt]{--color-glass-fill-strong:var(--surface-raised);--color-tab-bar:var(--surface-card);--color-glass-stroke:rgba(255,255,255,.3)}:root[data-rt][data-app="metal"]{--color-glass-stroke:rgba(11,21,48,.3)}
 :root[data-rt] .v2glass,:root[data-rt] .tabbar,:root[data-rt] .sheet2,:root[data-rt] .veil{-webkit-backdrop-filter:none;backdrop-filter:none}
+/* AX3 — the largest accessibility text size (Figma «AX3 · 01 Сегодня» 429:1036, «AX3 · 05 Питание» 431:1051) */
+:root[data-ax] .t-body{font-size:40px;line-height:48px}:root[data-ax] .t-label{font-size:35px;line-height:42px}:root[data-ax] .t-cap{font-size:31px;line-height:37.2px}:root[data-ax] .t-over{font-size:31px;line-height:37.2px;letter-spacing:1.2px}
+:root[data-ax] .t-title{font-size:40px;line-height:48px;letter-spacing:0}:root[data-ax] .t-titleL{font-size:44px;line-height:52.8px;letter-spacing:-.4px}:root[data-ax] .tnum,:root[data-ax] .v30,:root[data-ax] .v44{font-size:44px;line-height:52.8px;letter-spacing:-.9px}:root[data-ax] .tnum small{font-size:31px;line-height:37.2px}
+:root[data-ax] .hdr2 .t-cap{font-size:13px;line-height:15.6px}:root[data-ax] .hdr2 .t-title{font-size:20px;line-height:24px}:root[data-ax] [data-go=factors]>div:nth-child(2) .t-cap{font-size:13px;line-height:15.6px;top:181px!important}:root[data-ax] [data-go=factors]>div:nth-child(2)>div:first-of-type{top:45.6px!important;line-height:115.2px!important}
+:root[data-ax] [data-go=factors] .v2raised>span{display:block}:root[data-ax] [data-go=factors] .v2raised>span.c-sec{margin-left:-4px}:root[data-ax] .pi .bs{font-size:40px;line-height:48px}:root[data-ax] .pi .mic{font-size:31px;line-height:37.2px}:root[data-ax] .hdr2 .hbat{line-height:15.6px}
+:root[data-ax] .grid3,:root[data-ax] .grid2{grid-template-columns:minmax(0,1fr)}:root[data-ax] .tile{height:auto;padding-bottom:15px}:root[data-ax] .tile>[style*="position:absolute"]{position:static!important;width:100%!important;margin-top:8px}
+:root[data-ax] .tile [style*="display:flex;gap:3px"] i{flex:1;width:auto!important}:root[data-ax] .tcap2{display:block;max-width:none}
+:root[data-ax] [data-go=factors] .v2raised{display:block!important;height:auto!important;white-space:normal!important;text-align:left;padding:4px 10.5px 10px!important}
+:root[data-ax] [data-go=factors]>div:nth-child(2){margin-top:13px!important}:root[data-ax] .tile>[style*="position:absolute"]{margin-top:7px;display:block}:root[data-ax] [data-go=factors] .t-body.c-pri{margin-top:6px!important}:root[data-ax] [data-go=factors] .t-label{margin-top:5.5px!important}
+:root[data-ax] .v2card>.row:first-child{flex-direction:column;align-items:flex-start;gap:10px!important}:root[data-ax] .v2card>.row:first-child .t-over{max-width:238px}:root[data-ax] .v2card>.t-title{margin-top:10px!important}:root[data-ax] .chips{margin-top:12px!important}
+.chip2x{}:root[data-ax] .chip2{height:44px;white-space:nowrap}:root[data-ax] [data-go=factors] .t-label{white-space:nowrap}
 .chip2{height:44px;padding:0 16.5px;border-radius:22px;display:inline-flex;align-items:center}
 .duo{position:relative;width:80px;height:52px;flex:none}.duo .cb{position:absolute;top:0}.duo-me{left:0;z-index:2}.duo-club{left:28px;z-index:1}.duo-club{background:color-mix(in srgb,var(--bottom) 22%,var(--glass))!important;border-color:color-mix(in srgb,var(--stroke) 60%,transparent)!important;box-shadow:none!important}.duo-club .i{opacity:.78}.duo-me{box-shadow:4px 0 14px rgba(0,0,0,.35)}.duo-club .badge{right:-4px}
 .htitle{flex:1;text-align:center;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;padding:0 6px}
@@ -237,7 +248,7 @@ const st={tab:'today',stack:[],theme:'blue',water:1.2,eaten:1420,goal:2100,advQ:
 st.ts=80;st.tw='n';st.ptab='p';
 try{const s=JSON.parse(localStorage.getItem('vitals-proto')||'{}');if(s.theme)st.theme=s.theme;if(s.ts)st.ts=s.ts;if(s.tw)st.tw=s.tw;}catch(e){}
 const save=()=>{try{localStorage.setItem('vitals-proto',JSON.stringify({theme:st.theme,ts:st.ts,tw:st.tw}))}catch(e){}};
-function applyTheme(){const de=document.documentElement;const rt=/[?&#]rt=1/.test(location.search+location.hash)||matchMedia('(prefers-reduced-transparency: reduce)').matches;if(rt)de.dataset.rt='';else delete de.dataset.rt;de.dataset.app=st.theme==='light'?'metal':st.theme;if(st.theme==='blue')delete de.dataset.app;if(st.theme==='light')de.dataset.acc='lime';else delete de.dataset.acc;}
+function applyTheme(){const de=document.documentElement;{const q=/[?&#]ax=3/.test(location.search+location.hash);let big=false;try{const t=document.createElement('span');t.style.font='-apple-system-body';document.body.appendChild(t);big=parseFloat(getComputedStyle(t).fontSize)>=40;t.remove()}catch(e){}if(q||big)de.dataset.ax='';else delete de.dataset.ax}const rt=/[?&#]rt=1/.test(location.search+location.hash)||matchMedia('(prefers-reduced-transparency: reduce)').matches;if(rt)de.dataset.rt='';else delete de.dataset.rt;de.dataset.app=st.theme==='light'?'metal':st.theme;if(st.theme==='blue')delete de.dataset.app;if(st.theme==='light')de.dataset.acc='lime';else delete de.dataset.acc;}
 
 // ---------- helpers ----------
 // Readiness ring with a game-style glint every 5 s: a tiny star sprite (bright core, soft halo, thin cross rays) flashes on the arc,
