@@ -895,7 +895,7 @@ function bandSleepApply(){if(!window.VITALS_NATIVE)return false;const bn=bandNig
  const isos=Object.keys(BN).concat(Object.keys(BAND.day)).sort(),last=isos[isos.length-1];if(last&&last>isoOf(TODAY)){const r=new Date();TODAY=new Date(r.getFullYear(),r.getMonth(),r.getDate());VV.date=`${DOWF[TODAY.getDay()]}, ${TODAY.getDate()} ${MONG[TODAY.getMonth()]}`}
  night=k=>BN[isoOf(tday(-k))]||BN0.night(k);
  const n=BN[isoOf(TODAY)];
- if(n){const t=tot(n),sc=sScore(n),w=sWord(sc);VV.sl={asleep:hm(t),bed:clock(n.bed),wake:clock(n.wake),word:w,score:sc,hr:n.hr?n.hr.avg:null};VV.sleepTxt=`${Math.floor(t/60)} ч ${t%60} мин`;VV.sleep={...(BN0.sleep||{}),score:sc,word:w,insights:sInsight(n)}}
+ if(n){const FS=window.NORMA_SERVER_FEED&&FEED&&FEED.sleep&&FEED.sleep.date===isoOf(TODAY)?FEED.sleep:null,FH=FS&&FEED.heart&&(FEED.heart.series||[]).find(x=>x.date===FS.date);if(FH&&FH.sleep_hr&&FH.rhr)n.hr={...(n.hr||{}),avg:Math.round(FH.sleep_hr),min:Math.round(FH.rhr)};const t=tot(n),sc=FS&&FS.score!=null?FS.score:sScore(n),w=sWord(sc);VV.sl={asleep:hm(t),bed:clock(n.bed),wake:clock(n.wake),word:w,score:sc,hr:n.hr?n.hr.avg:null};VV.sleepTxt=`${Math.floor(t/60)} ч ${t%60} мин`;VV.sleep={...(BN0.sleep||{}),score:sc,word:w,insights:sInsight(n)}}
  else{VV.sl=BN0.sl;VV.sleepTxt=BN0.sleepTxt;VV.sleep=BN0.sleep}
  bandMerge();return true}
 // Bracelet days merged into the history: a day with band data takes pulse, steps and calories from the band, older days stay on Garmin / the feed
