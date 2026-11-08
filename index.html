@@ -848,7 +848,9 @@ window.onBand=m=>{const b=BAND;switch(m.type){case'state':if(m.conn=='ready'&&!b
 let BBAT={};
 // Live pulse follows «Сегодня» and «Пульс»: opening them (or coming back to the app on them) asks the bracelet to measure; 15 s without a value restarts it
 let BLIVE=0;
-const bandOnLive=()=>{const n=st.stack.length?st.stack[st.stack.length-1]:st.tab;return n==='today'||n==='hr'||n==='live'};
+const bandOnLive=()=>true; // живой пульс идёт на любой странице, пока приложение на экране (08.11, решение Дмитрия)
+// индикатор «измеряем пульс» в шапке — как раньше, только на экранах с пульсом
+const bandHrScreen=()=>{const n=st.stack.length?st.stack[st.stack.length-1]:st.tab;return n==='today'||n==='hr'||n==='live'};
 function bandLive(force){if(!window.VITALS_NATIVE||BAND.st.conn!=='ready'||!bandOnLive())return;const t=Date.now();if(!force&&t-BLIVE<8000)return;BLIVE=t;BAND.userStop=false;bandCmd('live')}
 if(window.VITALS_NATIVE){document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible')bandLive(true)});
  setInterval(()=>{if(document.visibilityState!=='visible'||!bandOnLive()||BAND.st.conn!=='ready'||BAND.st.syncing)return;if(Date.now()-(BAND.hrAt||0)>15000)bandLive(true)},5000)}
@@ -998,7 +1000,7 @@ function bandPhase(){if(!window.VITALS_NATIVE)return null;const b=BAND,s=b.st;if
  if(s.conn!=='ready')return null;
  if(s.syncing||b.sync&&b.sync.state&&b.sync.state!=='done')return'sync';
  const fresh=b.hrLast&&Date.now()-b.hrLast.at<HRFRESH;
- if(!fresh&&!b.userStop&&bandOnLive()&&document.visibilityState==='visible'&&!['notwear','off'].includes(b.hrs))return'hr';
+ if(!fresh&&!b.userStop&&bandHrScreen()&&document.visibilityState==='visible'&&!['notwear','off'].includes(b.hrs))return'hr';
  return null}
 const bandBusy=()=>!!bandPhase();
 function bandSyncPct(){const y=BAND.sync;if(!y)return 0;if(y.pct!=null)return Math.max(0,Math.min(100,Math.round(y.pct)));const tot=y.total||1,day=Math.max(1,y.day||1),pr=Math.max(0,Math.min(100,y.progress||0));return Math.round(((day-1)*100+pr)/tot)}
